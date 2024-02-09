@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!
+{% endblock %}
+
+{% block body %}
+	<!-- ======= Hero Section ======= -->
+	<section id="hero" class="d-flex align-items-center scale-up-ver-bottom">
+		<div class="container position-relative text-center text-lg-start">
+			<div class="row">
+				<div class="col-lg-8">
+					<h1>Bienvenue aux
+						<span>Mealtin'Potes</span>
+					</h1>
+					<h2>
+						Concevoir la tradition en mouvement	c'est offrir un avenir au mot héritage.</h2>
+					<div class="btns">
+
+						<a href="{{ path('app_menu')}}" class="btn-menu m-1">Notre carte</a>
+						<a href="{{ path('app_reservation')}}" class="btn-book m-1">Réserver une table</a>
+					</div>
+				</div>
+
+				<div
+					class="col-lg-4 d-flex align-items-center justify-content-center position-relative">
+					<!-- Button trigger modal -->
+					<button type="button" class="play-btn" data-bs-toggle="modal" data-bs-target="#exampleModal"></button>
+				</div>
+
+				<!-- Modal -->
+				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="plyr__video-embed" id="player">
+								<iframe src="https://www.youtube.com/embed/F3zw1Gvn4Mk?si=_BsKpII41jxkYwsm?autoplay=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+			</section>
+			<!-- End Hero -->
+			<main
+				id="main">
+
+				<!-- ======= About Section ======= -->
+				<section id="about" class="about js-scroll fade-in-bottom">
+
+					<div class="container">
+						<div class="row">
+							<div class="col-lg-6 order-1 order-lg-2">
+								<div class="about-img">
+									<img src="{{asset('images/restaurant.jpg')}}" alt="">
+								</div>
+							</div>
+							<div class="col-lg-6 pt-4 pt-lg-0 order-2 order-lg-1 content">
+								<h3>Au coeur du Temple de la Gastronomie</h3>
+								<p class="fst-italic">
+									Plongez dans un univers où la passion culinaire rencontre l’art de recevoir.<br>
+									Chaque plat raconte une histoire, chaque saveur est une aventure.<br>
+									Notre équipe dévouée est impatiente de vous offrir des moments inoubliables, entourés de vos proches, dans une atmosphère conviviale et élégante.
+								</p>
+								<p class="fst-italic">
+									Une petite terrasse sympathique donnant sur la place vient compléter le tableau.<br>
+									Le chef nous a convaincu avec son généreux filet de daurade sur une étuvée de poireaux, crème d'épinard et chips de panais et sa pêche pochée et rhubarbe, crème à la cardamome.<br>
+									Une cuisine du marché finement préparée, sensible même et très saine dans ses compositions.
+								</p>
+							</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- End About Section -->
+
+		{% endblock %}

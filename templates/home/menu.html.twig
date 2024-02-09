@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notre carte
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<img src="{{asset('images/food.jpg')}}" class='img-food  scale-up-center'>
+		<div class="menu-container d-flex flex-column align-items-start align-items-lg-center justify-content-lg-center p-3 js-scroll fade-in-bottom">
+
+			<h2 class="fst-italic mt-5">ENTREES</h2>
+			<ul class="menu d-flex flex-column align-items-start align-items-lg-center">
+				<li>Maigre en tartare au shiso vert, chutney de pommes au vinaigre de cidre
+					<span class="price">12€</span>
+				</li>
+
+				<li>Œuf BIO à 63°, poireaux à l’huile de truffe, crème Vichyssoisse
+					<span class="price">12€</span>
+				</li>
+
+
+				<li>Veau en cannellonis façon blanquette, crème de champignons, sauce morilles au vin jaune
+					<span class="price">12€</span>
+				</li>
+
+			</ul>
+
+			<h2 class="fst-italic">PLATS</h2>
+			<ul class="menu d-flex flex-column align-items-start align-items-lg-center">
+
+				<li>Risoni à l’encre de seiche, St Jacques rôties, chorizo ibérique, émulsion au lard et parmesan
+					<span class="price">24€</span>
+				</li>
+
+
+				<li>Dorade rôtie, choux fleur au beurre noisette, velouté de topinambours
+					<span class="price">23€</span>
+				</li>
+
+
+				<li>Onglet de bœuf mariné, polenta croustillante au citron, champignons du moment, émulsion béarnaise
+					<span class="price">24€</span>
+				</li>
+
+
+				<li>Filet de canette rôtie, potimarron à l’huile de noisette, coings caramélisés
+					<span class="price">24€</span>
+				</li>
+
+
+			</ul>
+
+			<h2 class="fst-italic">DESSERTS</h2>
+			<ul class="menu d-flex flex-column align-items-start align-items-lg-center">
+
+				<li>Sélection de fromages affinés
+					<span class="price">12€</span>
+				</li>
+
+
+				<li>Mille feuilles de saison à la poire, ganache au chocolat dulcey, caramel au beurre salé
+					<span class="price">10€</span>
+				</li>
+
+
+				<li>Baba au rhum, fruits de saison, ganache parfumée à la tonka<span class="price">10€</span>
+				</li>
+
+
+				<li>Entremet chocolat Guanaja 70%, crémeux au poivre fumé, mousse légère
+					<span class="price">9€</span>
+				</li>
+
+
+				<li>Tarte vanillée, crémeux au kalamansi, ganache au thym citron, tuile au yuzu
+					<span class="price">12€</span>
+				</li>
+
+			</ul>
+		</div>
+		<p class="mt-5 text-center">Prix en euros nets, taxes et service compris - La maison n’accepte pas les chèques. Nous nous tenons à votre disposition pour toute information relative aux allergènes</p>
+	</div>
+
+
+{% endblock %}

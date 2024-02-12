@@ -1,4 +1,4 @@
-import './bootstrap.js';
+import "./bootstrap.js";
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -6,12 +6,11 @@ import './bootstrap.js';
  * which should already be in your base.html.twig.
  */
 import "bootstrap/dist/css/bootstrap.min.css";
-import './styles/app.css';
-import './styles/animation.css';
-import './vendor/plyr/dist/plyr.min.css';
-import './plyr.js';
+import "./styles/app.css";
+import "./styles/animation.css";
+import "./plyr.js";
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+console.log("This log comes from assets/app.js - welcome to AssetMapper! 🎉");
 
 const scrollElements = document.querySelectorAll(".js-scroll");
 
@@ -53,5 +52,3 @@ const handleScrollAnimation = () => {
 window.addEventListener("scroll", () => {
   handleScrollAnimation();
 });
-
-

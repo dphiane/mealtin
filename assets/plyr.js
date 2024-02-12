@@ -1,4 +1,5 @@
 import Plyr from "plyr";
+import "./vendor/plyr/dist/plyr.min.css";
   // Initialisez Plyr sur votre vidéo
   const player = new Plyr("#player");  
   // Récupérez l'élément de la modal

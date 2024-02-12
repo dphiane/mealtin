@@ -1,47 +1,61 @@
 <header>
 
-<!-- ======= Top Bar ======= -->
-<div id="topbar" class="d-flex align-items-center d-none d-lg-block">
-	<div class="container d-flex justify-content-center justify-content-md-between">
-		<div class="contact-info d-flex align-items-center">
-			<i class="fa-phone fa-solid d-flex align-items-center">
-				<span class="contact-span">03 89 61 45 93</span>
-			</i>
-			<i class="fa-regular fa-clock d-flex align-items-center ms-4">
-				<span class="contact-span">Mardi au samedi: 12h-14h / 19h-21h</i>
+	<!-- ======= Top Bar ======= -->
+	<div id="topbar" class="d-flex align-items-center d-none d-lg-block">
+		<div class="container d-flex justify-content-center justify-content-md-between">
+			<div class="contact-info d-flex align-items-center">
+				<i class="fa-phone fa-solid d-flex align-items-center">
+					<span class="contact-span">03 89 61 45 93</span>
+				</i>
+				<i class="fa-regular fa-clock d-flex align-items-center ms-4">
+					<span class="contact-span">Mardi au samedi: 12h-14h / 19h-21h</i>
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<nav class="navbar navbar-expand-lg ">
-		<div class="container-fluid">
-			<h1 class="logo text-center text-md-start">
-				<a href="{{ path('app_home') }}">Mealtin'Potes</a>
-			</h1>
-			<button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-				<i class="fa fa-navicon"></i>
-			</button>
-			<div class="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02">
-				<ul class="navbar-nav mb-2 mb-lg-0">
-					<li>
-						<a class="nav-link text-center" href="{{path('app_home')}}">Accueil</a>
-					</li>
-					<li>
-						<a class="nav-link text-center" href="{{ path('app_menu')}}">Notre carte</a>
+		<nav class="navbar navbar-expand-lg ">
+			<div class="container-fluid">
+				<h1 class="logo text-center text-md-start">
+					<a href="{{ path('app_home') }}">Mealtin'Potes</a>
+				</h1>
+				<button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+					<i class="fa fa-navicon"></i>
+				</button>
+				<div class="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02">
+					<ul class="navbar-nav mb-2 mb-lg-0">
+						<li>
+							<a class="nav-link text-center" href="{{path('app_home')}}">Accueil</a>
+						</li>
+						<li>
+							<a class="nav-link text-center" href="{{ path('app_menu')}}">Notre carte</a>
+						</li>
+						<li>
+							<a class="nav-link text-center" href="{{ path('app_gallery')}}">Gallerie</a>
+						</li>
+						<li>
+							<a class="nav-link text-center" href="{{ path('app_contact')}}">Nous contacter</a>
+						</li>
 
-					</li>
-					<li>
-						<a class="nav-link text-center" href="{{ path('app_gallery')}}">Gallerie</a>
+						{% if not app.user %}
+							<li>
+								<a class="nav-link text-center" href="{{ path('app_register')}}">Créer un compte</a>
+							</li>
+							<li>
+								<a class="nav-link text-center" href="{{ path('app_login')}}">Se connecter</a>
+							</li>
+						{% endif %}
 
-					</li>
-					<li>
-						<a class="nav-link text-center" href="{{ path('app_contact')}}">Nous contacter</a>
+						{% if app.user %}
+							<li>
+								<a class="nav-link text-center" href="{{ path('app_logout') }}">Se déconnecter</a>
+							</li>
+						{% endif %}
+						<a href="#book-a-table" class="book-a-table-btn d-none d-lg-flex">Réserver une table</a>
 
-					</li>
-					<a href="#book-a-table" class="book-a-table-btn d-none d-lg-flex">Réserver une table</a>
-				</ul>
+
+					</ul>
+				</div>
 			</div>
-		</div>
-	</nav>
+		</nav>
 
-</header>
+	</header>

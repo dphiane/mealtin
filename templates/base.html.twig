@@ -22,7 +22,7 @@
 		{% for label, messages in app.flashes(['success', 'warning']) %}
 			{% for message in messages %}
 				<div class="flash-{{ label }}">
-					{{ message }}
+					{{ message|raw }}
 				</div>
 			{% endfor %}
 		{% endfor %}

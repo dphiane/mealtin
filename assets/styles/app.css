@@ -50,6 +50,16 @@ ul {
 .btn-primary :hover{
     background-color: #d3af71;
 }
+.login-password-container .toggle-password-button{
+    top: 0;
+    right: 0;
+    color: white;
+}
+.toggle-password-container .toggle-password-button{
+        top: -1;
+            right: 0;
+            color: white;
+}
 /*--------------------------------------------------------------
 # Back to top button
 --------------------------------------------------------------*/

@@ -5,8 +5,12 @@
 
 {% block body %}
 
+<div class="mx-3">
 		{{form_start(form)}}
 		{{form_row(form.email)}}
+		{{form_row(form.firstname)}}
+		{{form_row(form.lastname)}}
+		{{form_row(form.telephone)}}
 		{{form_row(form.password)}}
 		<div class="d-flex align-items-center mb-3">
 			<button class='btn btn-primary me-2'>S'enregistrer</button>
@@ -15,6 +19,6 @@
 					Vous avez déja un compte ?</a>
 			</small>
 		</div>
-
 		{{form_end(form)}}
+</div>
 {% endblock %}

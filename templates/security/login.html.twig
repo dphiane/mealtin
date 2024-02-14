@@ -11,13 +11,18 @@
 		<h1 class="h3 mb-3 font-weight-normal">Se connecter</h1>
 		<label for="username">Email</label>
 		<input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control mb-3" autocomplete="email" required autofocus>
-		<label for="password">Mot de passe</label>
-		<input type="password" name="_password" id="password" class="form-control mb-3" autocomplete="current-password" required>
+
+		<div class="toggle-password-container login-password-container">
+			<label for="password">Mot de passe</label>
+			<input type="password" name="_password" id="password" class="form-control mb-3" autocomplete="current-password" required {{ stimulus_controller('symfony/ux-toggle-password/toggle-password', { buttonClasses: ['toggle-password-button'],hiddenLabel: 'Masquer',visibleLabel: 'Afficher' } ) }}>
+
+		</div>
 
 		<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 		<div class="checkbox mb-3">
-			<label >
-				<input type="checkbox" name="_remember_me"> Se souvenir de moi
+			<label>
+				<input type="checkbox" name="_remember_me">
+				Se souvenir de moi
 			</label>
 		</div>
 		<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">

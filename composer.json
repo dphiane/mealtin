@@ -43,12 +43,14 @@
     "symfony/string": "7.0.*",
     "symfony/translation": "7.0.*",
     "symfony/twig-bundle": "7.0.*",
+    "symfony/ux-toggle-password": "^2.14",
     "symfony/ux-turbo": "^2.14",
     "symfony/validator": "7.0.*",
     "symfony/web-link": "7.0.*",
     "symfony/yaml": "7.0.*",
     "symfonycasts/verify-email-bundle": "^1.16",
-    "twig/extra-bundle": "^2.12|^3.0",
+    "twig/extra-bundle": "^3.8",
+    "twig/intl-extra": "^3.8",
     "twig/twig": "^2.12|^3.0"
   },
   "config": {

@@ -6,6 +6,7 @@ use App\Entity\Reservation;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 
 class ReservationType extends AbstractType
 {
@@ -13,8 +14,12 @@ class ReservationType extends AbstractType
     {
         $builder
             ->add('date')
-            ->add('time')
-            ->add('numberOfGuest')
+            ->add('time',TimeType::class, [
+            'label' => 'Heure',
+            'input' => 'datetime_immutable',
+            'widget' => 'choice'
+            ])
+            ->add('howManyGuest')
         ;
     }
 

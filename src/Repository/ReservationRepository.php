@@ -21,6 +21,24 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
+
+    public function findByDateAndTime($date,$start,$end):array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.date = :date')
+            ->andWhere('r.time >= :start')
+            ->andWhere('r.time <= :end')
+            ->setParameter('date', $date)
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getResult();
+    }
+                /*    $start = $reservation->getTime();
+            $end = $start->modify('+2 hours');
+            $reservations = $reservationRepository->findByDateAndTime($date, $start, $end);
+            dd($disponibility);
+            dd($reservations); */
 //    /**
 //     * @return Reservation[] Returns an array of Reservation objects
 //     */

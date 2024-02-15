@@ -15,17 +15,20 @@ class Reservation
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $date = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private ?\DateTimeImmutable $date = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTimeInterface $time = null;
+    #[ORM\Column(type: Types::TIME_IMMUTABLE)]
+    private ?\DateTimeImmutable $time = null;
 
     #[ORM\Column]
-    private ?int $numberOfGuest = null;
+    private ?int $howManyGuest = null;
 
+    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    private ?Disponibility $disponibility = null;
 
     public function getId(): ?int
     {
@@ -44,41 +47,52 @@ class Reservation
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?\DateTimeImmutable
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(\DateTimeImmutable $date): static
     {
         $this->date = $date;
 
         return $this;
     }
 
-    public function getTime(): ?\DateTimeInterface
+    public function getTime(): ?\DateTimeImmutable
     {
         return $this->time;
     }
 
-    public function setTime(\DateTimeInterface $time): static
+    public function setTime(\DateTimeImmutable $time): static
     {
         $this->time = $time;
 
         return $this;
     }
 
-    public function getNumberOfGuest(): ?int
+    public function getHowManyGuest(): ?int
     {
-        return $this->numberOfGuest;
+        return $this->howManyGuest;
     }
 
-    public function setNumberOfGuest(int $numberOfGuest): static
+    public function setHowManyGuest(int $howManyGuest): static
     {
-        $this->numberOfGuest = $numberOfGuest;
+        $this->howManyGuest = $howManyGuest;
 
         return $this;
     }
 
+    public function getDisponibility(): ?Disponibility
+    {
+        return $this->disponibility;
+    }
 
+    public function setDisponibility(?Disponibility $disponibility): static
+    {
+        $this->disponibility = $disponibility;
+
+        return $this;
+    }
+   
 }

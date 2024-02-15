@@ -1,0 +1,15 @@
+<h1>Confirmation de réservation</h1>
+
+<p>Nous vous remercions d'avoir réservé une table le
+{{date| format_datetime ('full', 'none', locale ='fr') }}
+	à
+	{{time | date('H:i')}}
+	pour
+	{{guest}}
+	{% if guest > 1 %}
+		personnes
+	{% else %}
+		personne</p>
+{% endif %}
+
+<p>Cordialement le Mealtin'Potes</p>

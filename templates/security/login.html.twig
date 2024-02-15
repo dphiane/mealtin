@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block body %}
-	<form method="post">
+	<form method="post" class="mx-3">
 		{% if error %}
 			<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 		{% endif %}
@@ -27,6 +27,14 @@
 		</div>
 		<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-		<button class="btn btn-primary mb-3" type="submit">Connection</button>
+		<div class="d-flex d-flex align-items-center mb-3">
+
+			<button class="btn btn-primary me-2" type="submit">Connection</button>
+
+			<small>
+				<a href="{{path('app_register')}}">Pas encore de compte ?</a>
+			</small>
+		</div>
+
 	</form>
 {% endblock %}

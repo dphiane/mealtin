@@ -2,21 +2,28 @@
 
 namespace App\Controller;
 
-use App\Entity\Disponibility;
 use App\Entity\Reservation;
+use App\Entity\Disponibility;
 use App\Form\ReservationType;
+use Symfony\Component\Mime\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ReservationRepository;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 
 class ReservationController extends AbstractController
 {
     #[Route('/reservation', name: 'app_reservation')]
-    public function index(Request $request, EntityManagerInterface $entityManagerInterface, ReservationRepository $reservationRepository): Response
-    {
+    #[IsGranted('ROLE_USER')]
+    public function index(Request $request, EntityManagerInterface $entityManagerInterface, ReservationRepository $reservationRepository, MailerInterface $mailerInterface): Response
+    {   
+        
         $reservation = new Reservation();
         $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
@@ -72,7 +79,18 @@ class ReservationController extends AbstractController
             $entityManagerInterface->flush();
 
             $this->addFlash("success", "Votre réservation a bien été enregistrée");
-            $this->redirectToRoute('app_home');
+            
+            $email = new TemplatedEmail();
+            $email->from(new Address('dphiane@yahoo.fr', 'Dominique'))
+                ->to($reservation->getUser()->getEmail())
+                ->subject('Confirmation réservation restaurant Mealtin\'Potes')
+                ->html($this->renderView(
+                    'reservation/confirmation_email.html.twig',
+                    ['date' => $reservation->getDate(), 'time' => $reservation->getTime(), 'guest' => $reservation->getHowManyGuest()]
+                ));
+            $mailerInterface->send($email);
+            
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('reservation/index.html.twig', [

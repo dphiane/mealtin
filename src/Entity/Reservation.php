@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ReservationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
@@ -19,12 +20,16 @@ class Reservation
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[Assert\NotNull]
     private ?\DateTimeImmutable $date = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE)]
+    #[Assert\NotNull]
     private ?\DateTimeImmutable $time = null;
 
     #[ORM\Column]
+    #[Assert\Positive]
+    #[Assert\NotNull]
     private ?int $howManyGuest = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]

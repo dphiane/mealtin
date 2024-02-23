@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UserController!
+{% endblock %}
+
+{% block body %}
+	<div class="m-3">
+		<h2>Page de profil</h2>
+		{{ form_start(form) }}
+		{{ form_rest(form) }}
+		<button class="btn btn-primary">Mettre à jour</button>
+		{{ form_end(form )}}
+	</div>
+	<h2 class='m-3'>Mes reservations</h2>
+	<div class="mask d-flex align-items-center h-100 m-3" style="background-color: rgba(0,0,0,.25);">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="card bg-dark shadow-2-strong">
+					<div class="table-responsive">
+						<table class="table table-dark table-borderless mb-0">
+							<thead>
+								<th class="text-center align-middle">Date</th>
+								<th class="text-center align-middle">Heure</th>
+								<th class="text-center align-middle">Couverts</th>
+								<th class="d-none d-sm-table-cell">Modifier</th>
+								<th class="d-none d-sm-table-cell">Annuler</th>
+							</thead>
+							<tbody>
+								{% for reservation in reservations %}
+									{% if reservation.date|date('Y-m-d') > "now"|date('Y-m-d') %}
+										<tr>
+											<td class="text-center align-middle">{{ reservation.date | date("d/m/Y") }}</td>
+											<td class="text-center align-middle">{{ reservation.time |date('H:i') }}</td>
+											<td class="text-center align-middle">{{ reservation.howManyGuest }}</td>
+											<td class="text-center align-middle">
+												<a href="{{ path('app_user_edit', {'id': reservation.id})}}" class="d-none d-sm-table-cell">Modifier</a>
+												<a href="{{ path('app_user_edit', {'id': reservation.id})}}" class="d-sm-none">
+													<i class="fa-solid fa-pen-to-square"></i>
+												</a>
+											</td>
+											<td class="text-center align-middle">
+												<a href="{{ path('app_user_cancel', {'id': reservation.id})}}" class="d-none d-sm-table-cell">Annuler</a>
+												<a href="{{ path('app_user_cancel', {'id': reservation.id})}}" class="d-sm-none">
+													<i class="fa-solid fa-trash"></i>
+												</a>
+											</td>
+										</tr>
+									</tbody>
+								</tbody>
+							</tbody>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div></div></div></div>{% endblock %}

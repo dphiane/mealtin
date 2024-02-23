@@ -1,0 +1,13 @@
+.datepicker {
+    min-width: 340px;
+}
+
+.datepicker .table-condensed {
+    width: 100%;
+}
+.datepicker table tr td.today:hover,
+.datepicker table tr td.today:hover:hover,
+.datepicker table tr td.today{
+    background:#cda45e;
+    color: white;
+}

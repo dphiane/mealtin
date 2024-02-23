@@ -18,6 +18,14 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
+    'jquery'=>[
+        'path' => './assets/jquery.js',
+        'entrypoint' => true,
+    ],
+/*     'plyr'=> [
+        'path' =>'./assets/plyr.js',
+        'entrypoint' => true,
+    ], */
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],

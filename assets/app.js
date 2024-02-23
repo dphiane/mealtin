@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/app.css";
 import "./styles/animation.css";
 import "./plyr.js";
-
+import "./styles/jquery.css";
 console.log("This log comes from assets/app.js - welcome to AssetMapper! 🎉");
 
 const scrollElements = document.querySelectorAll(".js-scroll");

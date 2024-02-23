@@ -7,6 +7,7 @@ use App\Entity\Disponibility;
 use App\Form\ReservationType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ReservationRepository;
+use App\Service\ReservationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,9 +19,8 @@ class ReservationController extends AbstractController
 {
     #[Route('/reservation', name: 'app_reservation')]
     #[IsGranted('ROLE_USER')]
-    public function index(Request $request, EntityManagerInterface $entityManagerInterface, ReservationRepository $reservationRepository, MailerInterface $mailerInterface): Response
+    public function index(ReservationService $reservationService,Request $request, EntityManagerInterface $entityManagerInterface, ReservationRepository $reservationRepository, MailerInterface $mailerInterface): Response
     {   
-        
         $reservation = new Reservation();
         $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
@@ -31,32 +31,7 @@ class ReservationController extends AbstractController
             $reservations = $reservationRepository->findOneBy(['date' => $date]);
 
             if ($reservations) {    
-                $disponibility = $reservations->getDisponibility();
-                $reservationTime = $reservation->getTime()->format("H:i:s");
-
-                $disponibilityReservationLunch = $disponibility->getMaxReservationLunch();
-                $disponibilityReservationDiner = $disponibility->getMaxReservationDiner();
-                $disponibilityMaxSeatDiner = $disponibility->getMaxSeatDiner();
-                $disponibilityMaxSeatLunch = $disponibility->getMaxSeatLunch();
-
-                $howManyGuest= $reservation->getHowManyGuest();
-                if ($reservationTime < "14:00:00") {
-                    if($disponibilityMaxSeatLunch - $howManyGuest < 0 || $disponibilityReservationLunch - 1 <0){
-                        $this->addFlash('warning','Malheursement nous n\'avons pas assez de place');
-                        return $this->redirectToRoute('app_reservation');
-                    }
-                    $disponibility
-                        ->setMaxReservationLunch($disponibilityReservationLunch - 1)
-                        ->setMaxSeatLunch($disponibilityMaxSeatLunch - $howManyGuest);
-                } else {
-                    if ($disponibilityMaxSeatDiner - $howManyGuest < 0 || $disponibilityReservationDiner - 1 < 0) {
-                        $this->addFlash('warning', 'Malheursement nous n\'avons pas assez de place');
-                        return $this->redirectToRoute('app_reservation');
-                    }
-                    $disponibility
-                        ->setMaxReservationDiner($disponibilityReservationDiner - 1)
-                        ->setMaxSeatDiner($disponibilityMaxSeatDiner - $howManyGuest);
-                }
+            $disponibility=  $reservationService->ifReservation($reservations,$reservation);
             } else {
                 // Si aucune réservation n'est trouvée, créez une nouvelle disponibilité
                 $disponibility = new Disponibility();
@@ -65,16 +40,23 @@ class ReservationController extends AbstractController
                     ->setMaxReservationLunch(13)
                     ->setMaxSeatDiner(40);
             }
-            $this->addFlash("success", "Votre réservation a bien été enregistrée");
 
             // Attribuez cette disponibilité à la réservation créée
-            $reservation->setDisponibility($disponibility);
-            $entityManagerInterface->persist($disponibility);
-            $entityManagerInterface->flush();
+            if (!$entityManagerInterface->contains($disponibility)) {
+                $entityManagerInterface->persist($disponibility);
+            }
+            
+            // Associe $disponibility à $reservation (si nécessaire)
             $reservation->setUser($user);
             $reservation->setDisponibility($disponibility);
-            $entityManagerInterface->persist($reservation);
+
+            // Persiste ensuite $reservation
+            if (!$entityManagerInterface->contains($reservation)) {
+                $entityManagerInterface->persist($reservation);
+            }
+            // Flush des changements
             $entityManagerInterface->flush();
+            $this->addFlash("success", "Votre réservation a bien été enregistrée");
 
             /*             $email = new TemplatedEmail();
             $email->from(new Address('dphiane@yahoo.fr', 'Dominique'))

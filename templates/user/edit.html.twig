@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier ma réservation
+{% endblock %}
+
+{% block body %}
+	{{form_start(reservationForm)}}
+	{{form_rest(reservationForm)}}
+	<button class="btn btn-primary">Modifier</button>
+	{{form_end(reservationForm)}}
+{% endblock %}

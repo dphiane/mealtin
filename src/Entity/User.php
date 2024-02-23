@@ -29,8 +29,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 6,)]
+    #[Assert\Length(min: 6, minMessage: 'Le mot de passe doit faire au moins 6 caractères.')]
     private ?string $password = null;
+
+    #[Assert\Length(min: 6, minMessage: 'Le mot de passe doit faire au moins 6 caractères.')]
+    private ?string $newPassword=null;
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
@@ -208,5 +211,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * Get the value of newPassword
+     */
+    public function getNewPassword(): ?string
+    {
+        return $this->newPassword;
+    }
 
+    /**
+     * Set the value of newPassword
+     *
+     * @return  self
+     */
+    public function setNewPassword($newPassword): self
+    {
+        $this->newPassword = $newPassword;
+
+        return $this;
+    }
 }

@@ -2,10 +2,16 @@
 
 {% block title %}Modifier ma réservation
 {% endblock %}
+{% block importmap %}
+	{{ importmap(['jquery','app']) }}
+{% endblock %}
+
 
 {% block body %}
+<div class="m-3">
 	{{form_start(reservationForm)}}
 	{{form_rest(reservationForm)}}
 	<button class="btn btn-primary">Modifier</button>
 	{{form_end(reservationForm)}}
+</div>
 {% endblock %}

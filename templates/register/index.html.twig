@@ -5,13 +5,11 @@
 
 {% block body %}
 
-<div class="mx-3">
+<div class="mx-3 form">
+
 		{{form_start(form)}}
-		{{form_row(form.email)}}
-		{{form_row(form.firstname)}}
-		{{form_row(form.lastname)}}
-		{{form_row(form.telephone)}}
-		{{form_row(form.password)}}
+		{{form_rest(form)}}
+
 		<div class="d-flex align-items-center mb-3">
 			<button class='btn btn-primary me-2'>S'enregistrer</button>
 			<small>

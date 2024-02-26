@@ -14,49 +14,66 @@
 		</div>
 
 		<nav class="navbar navbar-expand-lg ">
-			<div class="container-fluid">
+			<div class="container">
 				<h1 class="logo text-center text-md-start">
 					<a href="{{ path('app_home') }}">Mealtin'Potes</a>
 				</h1>
 				<button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
 					<i class="fa fa-navicon"></i>
 				</button>
-				<div class="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02">
+				<div class="collapse navbar-collapse justify-content-center" id="navbarTogglerDemo02">
 					<ul class="navbar-nav mb-2 mb-lg-0">
-						<li>
-							<a class="nav-link text-center" href="{{path('app_home')}}">Accueil</a>
+						<li class="nav-item {{ path('app_home')| is_active_uri}}">
+							<a class="nav-link text-center" href="{{path('app_home')}}">Accueil<span></span></a>
 						</li>
-						<li>
+						<li class="nav-item {{ path('app_menu')| is_active_uri}}">
 							<a class="nav-link text-center" href="{{ path('app_menu')}}">Notre carte</a>
 						</li>
-						<li>
+						<li class="nav-item {{ path('app_gallery')| is_active_uri}}">
 							<a class="nav-link text-center" href="{{ path('app_gallery')}}">Gallerie</a>
 						</li>
-						<li>
+						<li class="nav-item {{ path('app_contact')| is_active_uri}}">
 							<a class="nav-link text-center" href="{{ path('app_contact')}}">Nous contacter</a>
 						</li>
+						<li class="nav-item {{ path('app_reservation')| is_active_uri}}">
+							<a href="{{ path('app_reservation')}}" class="nav-link text-center">Réserver une table</a>
+						</li>
 
+						<div class="dropdown d-flex justify-content-center flex-column align-items-center">
 
-						{%- if is_granted('ROLE_USER') -%}
-							<li>
-								<a href="{{ path('app_user') }}" class="nav-link text-center">Mon profile</a>
-							</li>
-							<li>
-								<a class="nav-link text-center" href="{{ path('app_logout') }}">Se déconnecter</a>
-							</li>
-						{% else %}
-							<li>
-								<a class="nav-link text-center" href="{{ path('app_register')}}">Créer un compte</a>
-							</li>
-							<li>
-								<a class="nav-link text-center" href="{{ path('app_login')}}">Se connecter</a>
-							</li>
-						{% endif %}
-						<a href="{{ path('app_reservation')}}" class="book-a-table-btn d-none d-lg-flex">Réserver une table</a>
+							<a class="dropdown-toggle px-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 
+								{%- if is_granted('ROLE_USER') -%}
+									Mon compte
+								{% else %}
+									Se connecter / S'incrire
+								{% endif %}
+							</a>
+							<ul class="dropdown-menu dropdown-menu-dark w-100">
+
+								{%- if is_granted('ROLE_USER') -%}
+									<li>
+										<a href="{{ path('app_user') }}" class="text-center dropdown-item">Mon profil</a>
+									</li>
+									<li>
+										<a class="text-center dropdown-item" href="{{ path('app_my_reservation') }}">Mes réservations</a>
+									</li>
+									<li>
+										<a class="text-center dropdown-item" href="{{ path('app_logout') }}">Se déconnecter</a>
+									</li>
+								{% else %}
+									<li>
+										<a class="text-center dropdown-item" href="{{ path('app_register')}}">Créer un compte</a>
+									</li>
+									<li>
+										<a class="text-center dropdown-item" href="{{ path('app_login')}}">Se connecter</a>
+									</li>
+								{% endif %}
+							</ul>
+						</div>
+						<span class="slider"></span>
 					</ul>
 				</div>
 			</div>
 		</nav>
-
 	</header>

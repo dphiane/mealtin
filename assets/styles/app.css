@@ -863,3 +863,7 @@ align-items: center;
 #reservation_form{
     width: 60%;
 }
+
+.modal-delete{
+    color: #0c0b09;
+}

@@ -4,6 +4,7 @@ namespace App\Form;
 
 use DateTimeImmutable;
 use App\Entity\Reservation;
+use DateTime;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
@@ -37,6 +38,7 @@ class ReservationType extends AbstractType
                 }
             })
             //->add('date') décommenter et désactiver jquery et le add->('date') plus haut pour gérer les résa via symfony et pas js.
+            
             ->add('time', TimeType::class, [
                 'label' => 'Heure',
                 'input' => 'datetime_immutable',

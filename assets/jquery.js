@@ -88,7 +88,14 @@ function updateTimeSlots() {
         } else {
           updateNumberGuest(data.maxSeatDiner);
         }
-      });
+      })
+      if (window.location.href.match(/\/mes-reservations\/\d+$/)){
+        const reservation_time_hour= document.getElementById('reservation_time_hour')
+        const reservation_time_minute = document.getElementById('reservation_time_minute')
+        
+        reservation_time_hour.value=data.hour
+        reservation_time_minute.value= data.minute
+      }
     })
 
     .catch(function (error) {

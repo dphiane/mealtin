@@ -38,7 +38,10 @@ class MyReservationController extends AbstractController
         $dateReservation = $reservation->getDate()->format('Y-m-d');
         $reservationHowManyGuest = $reservation->getHowManyGuest();
         $reservationTime = $reservation->getTime()->format("H:i");
-
+        $timeReservation=[
+            'hour' => 14,
+            'minute' => 30,
+        ];
         $disponibilityMaxSeatDiner = $disponibility->getMaxSeatDiner();
         $disponibilityMaxSeatLunch = $disponibility->getMaxSeatLunch();
         $disponibilityMaxReservationLunch = $disponibility->getMaxReservationLunch();
@@ -131,7 +134,7 @@ class MyReservationController extends AbstractController
         return $this->render('my_reservation/edit.html.twig', [
             'reservationForm' => $reservationForm->createView(),
             'dateReservation' => $dateReservation,
-            'timeReservation' => $reservationTime
+            'reservationTime' => $reservationTime
         ]);
     }
     #[Route('/annuler-reservation/{id}', name: 'app_my_reservation_cancel')]

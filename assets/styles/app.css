@@ -854,6 +854,12 @@ margin: 10px;
 border-bottom: solid 2px;
 }
 
+@media screen and (max-width: 991px) {
+    .active {
+        border-top: solid 2px;
+    }
+}
+
 .form{
 display: flex;
 justify-content: center;

@@ -22,10 +22,10 @@ return [
         'path' => './assets/jquery.js',
         'entrypoint' => true,
     ],
-/*     'plyr'=> [
+    'plyrVideo'=> [
         'path' =>'./assets/plyr.js',
         'entrypoint' => true,
-    ], */
+    ],
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],

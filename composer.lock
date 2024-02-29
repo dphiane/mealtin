@@ -4,8 +4,62 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c98da2765c184e1871d3d4b46fcf54f",
+    "content-hash": "078a0f3090ce065b32916c48289a4837",
     "packages": [
+        {
+            "name": "bw/active-menu-item-bundle",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bocharsky-bw/ActiveMenuItemBundle.git",
+                "reference": "cbacbde9b65bdc32832e997924bbc61f7c27a2e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bocharsky-bw/ActiveMenuItemBundle/zipball/cbacbde9b65bdc32832e997924bbc61f7c27a2e8",
+                "reference": "cbacbde9b65bdc32832e997924bbc61f7c27a2e8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9",
+                "symfony/framework-bundle": "^4.4|^5.4|^6.0|^7.0",
+                "symfony/twig-bundle": "^4.4|^5.4|^6.0|^7.0",
+                "twig/twig": "^2.0|^3.0"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^3.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "BW\\ActiveMenuItemBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Victor Bocharsky",
+                    "email": "bocharsky.bw@gmail.com"
+                }
+            ],
+            "description": "The active menu item highlighting of simple HTML menu in Symfony applications",
+            "homepage": "https://github.com/bocharsky-bw/ActiveMenuItemBundle",
+            "keywords": [
+                "active",
+                "bw",
+                "highlight",
+                "item",
+                "menu"
+            ],
+            "support": {
+                "issues": "https://github.com/bocharsky-bw/ActiveMenuItemBundle/issues",
+                "source": "https://github.com/bocharsky-bw/ActiveMenuItemBundle/tree/v1.2.0"
+            },
+            "time": "2024-01-17T10:03:37+00:00"
+        },
         {
             "name": "composer/semver",
             "version": "3.4.0",

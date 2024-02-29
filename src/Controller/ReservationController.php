@@ -35,10 +35,24 @@ class ReservationController extends AbstractController
             } else {
                 // Si aucune réservation n'est trouvée, créez une nouvelle disponibilité
                 $disponibility = new Disponibility();
-                $disponibility->setMaxReservationDiner(13)
-                    ->setMaxSeatLunch(40)
-                    ->setMaxReservationLunch(13)
+                $reservationTime = $reservation->getTime()->format("H:i");
+                $howManyGuest = $reservation->getHowManyGuest();
+                if($reservationTime >= "12:00" && $reservationTime <= "14:00" ){
+                    $disponibility
+                    ->setMaxReservationLunch(12)
+                    ->setMaxSeatLunch(40 - $howManyGuest)
+                    ->setMaxReservationDiner(13)
                     ->setMaxSeatDiner(40);
+                }elseif($reservationTime >= "19:00" && $reservationTime <= "21:00"){
+                    $disponibility
+                    ->setMaxReservationDiner(12)
+                    ->setMaxSeatDiner(40 - $howManyGuest)
+                    ->setMaxReservationLunch(13)
+                    ->setMaxSeatLunch(40);
+                }else{
+                    $this->addFlash("warning","Veuillez entrer un horaire valide !");
+                    return $this->redirect($request->headers->get('referer'));
+                }
             }
 
             // Attribuez cette disponibilité à la réservation créée

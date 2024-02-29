@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier ma réservation
+{% endblock %}
+{% block importmap %}
+	{{ importmap(['app','jquery']) }}
+{% endblock %}
+
+{% block body %}
+	<div class="m-3 d-flex justify-content-center align-items-center">
+		{{form_start(reservationForm,{'attr': {'id': 'reservation_form'}})}}
+		{{ form_row(reservationForm.date, {'attr': {'value': dateReservation}}) }}
+		{{form_rest(reservationForm)}}
+		<button class="btn btn-primary">Modifier</button>
+		{{form_end(reservationForm)}}
+	</div>
+{% endblock %}

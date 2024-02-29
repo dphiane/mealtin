@@ -1,14 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ReservationController!{% endblock %}
+{% block title %}Réserver une table{% endblock %}
     {% block importmap %}	
     	{{ importmap(['jquery','app']) }}
     {% endblock %}
     
 {% block body %}
-<div class="m-3">
+<div class="m-3 scale-up-ver-top form">
 {{form_start(form,{'attr': {'id': 'reservation_form'}})}}
-
 {{form_rest(form)}}
 <button class="btn btn-primary">Réserver</button>
 {{form_end(form)}}

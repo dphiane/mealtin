@@ -55,9 +55,13 @@ function updateTimeSlots() {
       } else if (data.maxReservationLunch <= 0 || data.maxSeatLunch <= 0) {
         // Si aucune réservation n'est possible pour le déjeuner, définir les créneaux horaires sur le dîner
         hourSlot = [19, 20];
+        updateNumberGuest(data.maxSeatDiner);
+
       } else if (data.maxReservationDiner <= 0 || data.maxSeatDiner <= 0) {
         // Si aucune réservation n'est possible pour le dîner, définir les créneaux horaires sur le déjeuner
         hourSlot = [12, 13];
+        updateNumberGuest(data.maxSeatLunch);
+
       }
 
       timeSelectHour.innerHTML = "";
@@ -77,7 +81,6 @@ function updateTimeSlots() {
         }
         timeSelectMinute.add(option);
       });
-      updateNumberGuest(data.maxReservationLunch);
 
       timeSelectHour.addEventListener("change", function () {
         if (timeSelectHour.value < 14) {
@@ -85,7 +88,14 @@ function updateTimeSlots() {
         } else {
           updateNumberGuest(data.maxSeatDiner);
         }
-      });
+      })
+      if (window.location.href.match(/\/mes-reservations\/\d+$/)){
+        const reservation_time_hour= document.getElementById('reservation_time_hour')
+        const reservation_time_minute = document.getElementById('reservation_time_minute')
+        
+        reservation_time_hour.value=data.hour
+        reservation_time_minute.value= data.minute
+      }
     })
 
     .catch(function (error) {
@@ -105,8 +115,8 @@ function updateNumberGuest(maxSeatAvailable) {
   }
 }
 
-reservationForm.addEventListener("submit", function (event) {
-  if(!conform){
-    event.preventDefault();
-  }
-});
+  reservationForm.addEventListener("submit", function (event) {
+    if (!conform) {
+      event.preventDefault();
+    }
+  });

@@ -37,10 +37,11 @@ class ReservationType extends AbstractType
                 }
             })
             //->add('date') décommenter et désactiver jquery et le add->('date') plus haut pour gérer les résa via symfony et pas js.
+            
             ->add('time', TimeType::class, [
                 'label' => 'Heure',
                 'input' => 'datetime_immutable',
-                'widget' => 'choice',
+                'widget' => 'choice',                
             ])
             ->add('howManyGuest', ChoiceType::class, [
                 'label' => 'Nombre de personnes',

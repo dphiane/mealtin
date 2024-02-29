@@ -1,4 +1,7 @@
 {
+    "bw/active-menu-item-bundle": {
+        "version": "v1.2.0"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.11",
         "recipe": {

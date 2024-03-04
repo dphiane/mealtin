@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ErrorController!{% endblock %}
+
+{% block body %}
+<div class="m-5 d-flex flex-column align-items-center justify-content-center">
+<h1>404</h1>
+<h2>Oups! Page non trouvée</h2>
+<a class="btn btn-primary my-3" href="{{path('app_home')}}">Revenir à la page d'accueil</a>
+</div>
+{% endblock %}

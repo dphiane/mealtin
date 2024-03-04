@@ -14,6 +14,7 @@ Fonctionnalités implémentées :
     Mail de confirmation de réservation et de modification
     Possibilité de modifier ou annuler les réservations
     Dans un souci d'efficacité des tests, l’utilisateur peut réserver plusieurs fois le même jour
+    Mise en place d'un rate limiter
 
 ## Installation
 

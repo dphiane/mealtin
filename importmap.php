@@ -26,6 +26,10 @@ return [
         'path' =>'./assets/plyr.js',
         'entrypoint' => true,
     ],
+    'editReservation'=> [
+        'path' =>'./assets/edit_reservation.js',
+        'entrypoint' => true,
+    ],
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],

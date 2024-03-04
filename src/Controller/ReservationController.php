@@ -8,6 +8,7 @@ use App\Form\ReservationType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ReservationRepository;
 use App\Service\ReservationService;
+use DateTime;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,13 +26,19 @@ class ReservationController extends AbstractController
         $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
         $user = $this->getUser();
+        $today = new DateTime("now");
 
         if ($form->isSubmitted() && $form->isValid()) {
             $date = $reservation->getDate();
             $reservations = $reservationRepository->findOneBy(['date' => $date]);
 
+            if($date < $today->modify("-1 day")  || $date > $today->modify('+1 month +2 weeks') ){
+                $this->addFlash("warning","votre réservation ne peut dépasser aller plus loin que 1 mois et 2 semaines");
+                return new Response("Bad Request", 400);
+            }
+            
             if ($reservations) {    
-            $disponibility=  $reservationService->ifReservation($reservations,$reservation);
+            $disponibility=  $reservationService->ifReservation($reservations,$reservation,$request);
             } else {
                 // Si aucune réservation n'est trouvée, créez une nouvelle disponibilité
                 $disponibility = new Disponibility();
@@ -51,7 +58,7 @@ class ReservationController extends AbstractController
                     ->setMaxSeatLunch(40);
                 }else{
                     $this->addFlash("warning","Veuillez entrer un horaire valide !");
-                    return $this->redirect($request->headers->get('referer'));
+                    return new Response("Bad Request", 400);
                 }
             }
 
@@ -81,8 +88,8 @@ class ReservationController extends AbstractController
                     ['date' => $reservation->getDate(), 'time' => $reservation->getTime(), 'guest' => $reservation->getHowManyGuest()]
                 ));
             $mailerInterface->send($email); */
-
-            return $this->redirectToRoute('app_home');
+            
+            return $this->redirectToRoute('app_my_reservation');
         }
 
         return $this->render('reservation/index.html.twig', [

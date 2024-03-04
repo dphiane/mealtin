@@ -1,3 +1,5 @@
+
+
 $(document).ready(function () {
   $("#reservation_date").datepicker({
     format: "dd-mm-yyyy",
@@ -54,14 +56,12 @@ function updateTimeSlots() {
         conform = false;
       } else if (data.maxReservationLunch <= 0 || data.maxSeatLunch <= 0) {
         // Si aucune réservation n'est possible pour le déjeuner, définir les créneaux horaires sur le dîner
-        hourSlot = [19, 20];
-        updateNumberGuest(data.maxSeatDiner);
-
+        hourSlot = [19, 20]
+        updateNumberGuest(data.maxReservationDiner)
       } else if (data.maxReservationDiner <= 0 || data.maxSeatDiner <= 0) {
         // Si aucune réservation n'est possible pour le dîner, définir les créneaux horaires sur le déjeuner
-        hourSlot = [12, 13];
-        updateNumberGuest(data.maxSeatLunch);
-
+        hourSlot = [12, 13]
+        updateNumberGuest(data.maxReservationLunch)
       }
 
       timeSelectHour.innerHTML = "";
@@ -89,15 +89,8 @@ function updateTimeSlots() {
           updateNumberGuest(data.maxSeatDiner);
         }
       })
-      if (window.location.href.match(/\/mes-reservations\/\d+$/)){
-        const reservation_time_hour= document.getElementById('reservation_time_hour')
-        const reservation_time_minute = document.getElementById('reservation_time_minute')
-        
-        reservation_time_hour.value=data.hour
-        reservation_time_minute.value= data.minute
-      }
+      updateNumberGuest(data.maxSeatLunch)
     })
-
     .catch(function (error) {
       console.error(error);
     });

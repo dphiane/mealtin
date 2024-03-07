@@ -22,6 +22,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank]
+    #[Assert\Email(message:"Veuillez taper un email valide")]
     private ?string $email = null;
 
     #[ORM\Column]

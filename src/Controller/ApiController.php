@@ -31,7 +31,9 @@ class ApiController extends AbstractController
                     'maxSeatLunch'=>$dispo->getMaxSeatLunch(),
                     'maxSeatDiner'=>$dispo->getMaxSeatDiner(),
                     'hour'=>$reservation->getTime()->format("H"),
-                    'minute'=>$reservation->getTime()->format("i")
+                    'minute'=>$reservation->getTime()->format("i"),
+                    'howManyGuest'=>$reservation->getHowManyGuest(),
+                    'date'=>$reservation->getDate()->format("Y-m-d"),
         ];
 
         return new JsonResponse($dispoToJson);

@@ -53,13 +53,9 @@ class RegisterController extends AbstractController
                     ->htmlTemplate('register/confirmation_email.html.twig')
             );
             
-            $this->addFlash(
-                'success',
-                'Merci de votre inscription.'
-            );
+            $this->addFlash('success','Merci de votre inscription.');
 
             return $userAuthenticatorInterface->authenticateUser($user, $this->authenticator, $request);
-
         }
 
         return $this->render('register/index.html.twig', [

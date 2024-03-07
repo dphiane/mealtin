@@ -40,3 +40,7 @@ Fonctionnalités implémentées :
    - Vous pouvez utiliser le mailer Mailtrap qui est gratuit.
      
 5. Lancez le serveur avec la commande : symfony serve -d
+
+## Erreur de migration
+Si vous tombez sur une erreur de migration sur la Version 20240213090952 j'ai supprimer une migration par erreur.
+Vous devez ajouter a la table user une column telephone varchar(255) not null

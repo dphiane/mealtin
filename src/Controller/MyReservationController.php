@@ -2,15 +2,18 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Form\ReservationType;
+use Symfony\Component\Mime\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ReservationRepository;
 use App\Repository\DisponibilityRepository;
-use DateTime;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -119,9 +122,7 @@ class MyReservationController extends AbstractController
             $entityManagerInterface->persist($reservation);
             $entityManagerInterface->flush();
 
-            $this->addFlash("success", "Votre réservation a bien été modifiée");
-
-            /*             $email = new TemplatedEmail();
+            $email = new TemplatedEmail();
             $email->from(new Address('dphiane@yahoo.fr', 'Mealtin\'Potes'))
                 ->to($reservation->getUser()->getEmail())
                 ->subject('Confirmation modification de votre réservation restaurant Mealtin\'Potes')
@@ -129,9 +130,10 @@ class MyReservationController extends AbstractController
                     'my_reservation/confirmation_email.html.twig',
                     ['date' => $reservation->getDate(), 'time' => $reservation->getTime(), 'guest' => $reservation->getHowManyGuest()]
                 ));
-            $mailerInterface->send($email); */
-            
-            return $this->redirectToRoute('app_my_reservation');
+            $mailerInterface->send($email);
+            $this->addFlash("success", "Votre réservation a bien été modifiée");
+
+            return $this->redirectToRoute('app_my_reservation', ['modifiée' => 1]);
         }
 
         return $this->render('my_reservation/edit.html.twig', [

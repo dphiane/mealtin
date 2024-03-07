@@ -4,7 +4,15 @@
 {% endblock %}
 
 {% block body %}
+	{% if app.request.query.get('reservée') %}
+			<div class="flash-success">Votre réservation a bien été enregistrée</div>
+	{% endif %}
+		{% if app.request.query.get('modifiée') %}
+			<div class="flash-success">Votre réservation a bien été modifiée</div>
+	{% endif %}
+	
 	<h2 class='m-3'>Mes reservations</h2>
+
 	<div class="mask d-flex align-items-center h-100 m-3" style="background-color: rgba(0,0,0,.25);">
 		<div class="container">
 			<div class="row justify-content-center">
@@ -67,4 +75,5 @@
 			</div>
 		</div>
 	</div>
+
 {% endblock %}

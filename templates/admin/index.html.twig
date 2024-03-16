@@ -1,0 +1,50 @@
+{% extends '/admin/base_admin.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+    <h2 class='m-3'>Disponibilités</h2>
+    <div class="mask d-flex align-items-center h-100 m-3" style="background-color: rgba(0,0,0,.25);">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="card bg-dark shadow-2-strong">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover table-borderless mb-0">
+                            <thead>
+                                <th class="text-center align-middle">Date</th>
+                                <th class="text-center align-middle d-none d-sm-table-cell">Nombre de reservation le midi</th>
+                                <th class="text-center align-middle">Place disponible pour le midi</th>
+                                <th class="text-center align-middle d-none d-sm-table-cell">Nombre de reservation le diner</th>
+                                <th class="text-center align-middle">Place disponible pour le diner</th>
+                            </thead>
+                            <tbody>
+                                {% for date, items in reservationsPerMonth %}
+                                    <a href="{{ path('app_admin_reservation_crud', {'date': date | date('Y-m-d')}) }}">
+                                        <tr onclick="window.location='{{ path('app_admin_reservation_crud', {'date': date | date('Y-m-d')}) }}';"  class="reservation-link">
+                                            <td class="text-center align-middle">{{ date | date('d/m/Y')}}</td>
+                                            {% set reservation = items[0] %}
+                                            <td class="text-center align-middle d-none d-sm-table-cell">{{13 - reservation.disponibility.maxReservationLunch }}</td>
+                                            <td class="text-center align-middle">{{ reservation.disponibility.maxSeatLunch }}</td>
+                                            <td class="text-center align-middle d-none d-sm-table-cell">{{13 - reservation.disponibility.maxReservationDiner }}</td>
+                                            <td class="text-center align-middle">{{ reservation.disponibility.maxSeatDiner }}</td>
+                                        </tr>
+                                    </a>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        {% if allReservations is not defined %}
+                            <div class="d-flex justify-content-center">
+                                <a href="{{ path('app_admin_reservations') }}">Ancienne réservations</a>
+                            </div>
+                        {% endif %}
+                        {# Afficher les liens de pagination #}
+                        <div class="pagination-container">
+                            {{ knp_pagination_render(reservationsPerMonth) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

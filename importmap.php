@@ -18,8 +18,12 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
-    'jquery'=>[
-        'path' => './assets/jquery.js',
+    'admin' => [
+        'path' => './assets/admin.js',
+        'entrypoint' => true,
+    ],
+    'reservation'=>[
+        'path' => './assets/reservation.js',
         'entrypoint' => true,
     ],
     'plyrVideo'=> [

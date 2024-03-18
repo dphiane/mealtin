@@ -34,10 +34,10 @@ class ReservationController extends AbstractController
             $reservations = $reservationRepository->findOneBy(['date' => $date]);
             try{
                 $reservationService->validateTimeAndDate($reservation->getTime()->format("H:i"),$date,$today,$timeOfToday);
-
+                //si une date possède déja une entity Disponibility
                 if ($reservations) {
-                    //dd($reservations);
-                    $disponibility =  $reservationService->handleIfReservationExistAtThisDate($reservations, $reservation);
+                    $disponibility =  $reservationService->checkDisponibilityAndUpdateEntity($reservations->getDisponibility(), $reservation);
+
                 } else {
                     
                     // Si aucune réservation n'est trouvée, créez une nouvelle disponibilité

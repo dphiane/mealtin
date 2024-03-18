@@ -44,17 +44,19 @@ class MyReservationController extends AbstractController
         ReservationService $reservationService
     ) {
         $reservation = $reservationRepository->findOneBy(['id' => $id]);
+        $originalReservation= clone $reservation;
         $disponibility = $disponibilityRepository->findOneBy(['id' => $reservation->getDisponibility()]);
         $reservationForm = $this->createForm(ReservationType::class, $reservation);
 
         $dateReservation = $reservation->getDate()->format('Y-m-d');
+        $reservationTime = $reservation->getTime();
         
         $reservationForm->handleRequest($request);
         if ($reservationForm->isSubmitted() && $reservationForm->isValid()) {
             try {
                 $reservations = $reservationRepository->findOneBy(['date' => $reservation->getDate()]);
 
-                $reservationService->handleEditReservation($disponibility, $reservation, $reservationForm, $reservations);
+                $reservationService->handleEditReservation($disponibility, $originalReservation, $reservations,$reservation);
                 $entityManagerInterface->persist($disponibility);
                 $entityManagerInterface->persist($reservation);
                 $entityManagerInterface->flush();
@@ -73,6 +75,7 @@ class MyReservationController extends AbstractController
         return $this->render('my_reservation/edit.html.twig', [
             'reservationForm' => $reservationForm->createView(),
             'dateReservation' => $dateReservation,
+            'reservationTime' =>$reservationTime
         ]);
     }
 

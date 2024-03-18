@@ -62,18 +62,19 @@ class ReservationsCrudController extends AbstractController
     public function editReservation($id, ReservationService $reservationService, ReservationRepository $reservationRepository, Request $request, DisponibilityRepository $disponibilityRepository, EntityManagerInterface $entityManagerInterface, EmailService $emailService): Response
     {
         $reservation = $reservationRepository->findOneBy(['id' => $id]);
+        $originalReservation = clone $reservation;
         $disponibility = $disponibilityRepository->findOneBy(['id' => $reservation->getDisponibility()]);
         $reservationForm = $this->createForm(ReservationType::class, $reservation);
-
+        
         $dateReservation = $reservation->getDate()->format('Y-m-d');
-
+        
         $reservationForm->handleRequest($request);
         if ($reservationForm->isSubmitted() && $reservationForm->isValid()) {
-
+            
             try {
                 $reservations = $reservationRepository->findOneBy(['date' => $reservation->getDate()]);
                 
-                $reservationService->handleEditReservation($disponibility, $reservation, $reservationForm, $reservations);
+                $reservationService->handleEditReservation($disponibility, $originalReservation, $reservations,$reservation);
 
                 $entityManagerInterface->persist($disponibility);
                 $entityManagerInterface->persist($reservation);

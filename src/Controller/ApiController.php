@@ -26,16 +26,22 @@ class ApiController extends AbstractController
         $dispo_id = $reservation->getDisponibility();
         $dispo = $disponibilityRepository->findOneBy(['id'=>$dispo_id]);
 
-        $dispoToJson=['maxReservationLunch' =>$dispo->getMaxReservationLunch(),
-                    'maxReservationDiner'=> $dispo->getMaxReservationDiner(),
-                    'maxSeatLunch'=>$dispo->getMaxSeatLunch(),
-                    'maxSeatDiner'=>$dispo->getMaxSeatDiner(),
-                    'hour'=>$reservation->getTime()->format("H"),
-                    'minute'=>$reservation->getTime()->format("i"),
-                    'howManyGuest'=>$reservation->getHowManyGuest(),
-                    'date'=>$reservation->getDate()->format("Y-m-d"),
-        ];
+        $dispoToJson = [];
 
+        if ($dispo !== null) {
+            $dispoToJson['maxReservationLunch'] = $dispo->getMaxReservationLunch();
+            $dispoToJson['maxReservationDiner'] = $dispo->getMaxReservationDiner();
+            $dispoToJson['maxSeatLunch'] = $dispo->getMaxSeatLunch();
+            $dispoToJson['maxSeatDiner'] = $dispo->getMaxSeatDiner();
+        }
+        
+        if ($reservation !== null) {
+            $dispoToJson['hour'] = $reservation->getTime()->format("H");
+            $dispoToJson['minute'] = $reservation->getTime()->format("i");
+            $dispoToJson['howManyGuest'] = $reservation->getHowManyGuest();
+            $dispoToJson['date'] = $reservation->getDate()->format("Y-m-d");
+        }
+        
         return new JsonResponse($dispoToJson);
     }
 }

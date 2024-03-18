@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends "/admin/base_admin.html.twig" %}
 
 {% block title %}Modifier ma réservation
 {% endblock %}
@@ -10,7 +10,6 @@
 	<div class="m-3 d-flex justify-content-center align-items-center">
 		{{form_start(reservationForm,{'attr': {'id': 'reservation_form'}})}}
 		{{ form_row(reservationForm.date, {'attr': {'value': dateReservation}}) }}
-		{{ form_row(reservationForm.time, {'attr': {'value': reservationTime|date('H:i')}})}}
 		{{form_rest(reservationForm)}}
 		<button class="btn btn-primary">Modifier</button>
 		{{form_end(reservationForm)}}

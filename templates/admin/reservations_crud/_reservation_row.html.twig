@@ -1,0 +1,39 @@
+<tr>
+	<td class="text-center align-middle">{{ reservation.user.lastname }}
+		{{ reservation.user.firstname }}</td>
+	<td class="text-center align-middle">{{ reservation.time | date('H:i') }}</td>
+	<td class="text-center align-middle">{{ reservation.howManyGuest }}</td>
+	<td class="text-center align-middle">
+		<a href="{{ path('app_admin_reservation_edit', {'id': reservation.id}) }}" class="text-center align-middle">
+			<span class="d-none d-sm-inline">Modifier</span>
+			<i class="fa-solid fa-pen-to-square d-sm-none"></i>
+		</a>
+	</td>
+	<td class="text-center align-middle">
+		<a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ reservation.id }}">
+			<span class="d-none d-sm-inline">Annuler</span>
+			<i class="fa-solid fa-trash d-sm-none"></i>
+		</a>
+
+		<div class="modal fade" id="confirmDeleteModal{{ reservation.id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel{{ reservation.id }}" aria-hidden="true">
+			<div class="modal-dialog modal-delete">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="confirmDeleteModalLabel{{ reservation.id }}">Confirmation de suppression</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						Êtes-vous sûr de vouloir supprimer cette réservation ?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						<form action="{{ path('app_admin_reservation_cancel', {'id': reservation.id}) }}" method="post">
+							<button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</td>
+</tr>
+

@@ -1,0 +1,29 @@
+h2,h3{
+    color: white;
+}
+.pagination-container{
+    display: flex;
+    justify-content: center;
+}
+.pagination-container .pagination{
+    margin: 5px;
+    border: none;
+}
+.page-item a{
+    color: #cda45e;
+    border: none;
+}
+.page-item a:hover{
+    background-color: #cda45e;
+    color: white;
+}
+.active > .page-link{
+    background-color: #cda45e;
+    border: none;
+}
+.disabled > .page-link{
+    border: none;
+}
+.reservation-link{
+    cursor: pointer;
+}

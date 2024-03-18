@@ -1,18 +1,16 @@
 <?php
 
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class SecurityTest extends WebTestCase
+class SecurityControllerTest extends WebTestCase
 {
-    public function testIndex(): void
+    public function testLoginWithCorrectCredential(): void
     {
         $client = static::createClient();
 
-        // get or create the user somehow (e.g. creating some users only
-        // for tests while loading the test fixtures)
         $container = static::getContainer();
         $userRepository = $container->get(UserRepository::class);
         $testUser = $userRepository->findOneByEmail('azerty@azerty.com');

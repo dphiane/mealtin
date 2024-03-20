@@ -34,6 +34,7 @@ class ReservationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    
                 /*    $start = $reservation->getTime();
             $end = $start->modify('+2 hours');
             $reservations = $reservationRepository->findByDateAndTime($date, $start, $end);

@@ -54,7 +54,7 @@ class ContactController extends AbstractController
             $email = (new contact())
             ->from($data['email'])
             ->to('dphiane@yahoo.fr')
-            ->subject("contacte mealtin'Potes")
+            ->subject("contacte mealtin")
             ->text($data['message']);
             $mailer->send($email);
 

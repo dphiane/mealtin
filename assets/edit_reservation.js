@@ -88,10 +88,10 @@ $(document).ready(function () {
           timeSelectMinute.add(option);
         });
         
-/*         if(data.hour){
+        if(data.hour){
             timeSelectHour.value=data.hour
         }
-         */
+        
         if(data.minute =="00"){
           timeSelectMinute.value=0
           timeSelectMinute.text= "00"

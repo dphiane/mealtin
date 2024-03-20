@@ -1,0 +1,63 @@
+	<div class="mask d-flex align-items-center h-100 m-3" style="background-color: rgba(0,0,0,.25);">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="card bg-dark shadow-2-strong">
+					<div class="table-responsive">
+						<table class="table table-dark table-borderless mb-0">
+							<thead>
+								<th class="text-center align-middle">Date</th>
+								<th class="text-center align-middle">Place disponible pour le midi</th>
+								<th class="text-center align-middle">Place disponible pour le diner</th>
+								<th class="d-none d-sm-table-cell text-center align-middle">Modifier</th>
+								<th class="d-none d-sm-table-cell text-center align-middle">Annuler</th>
+							</thead>
+							<tbody>
+								{% for dispo in reservationsPerMonth %}
+									<tr>
+										{% for date, reservations in reservationsDay %}
+											<td class="text-center align-middle">{{ date }}</td>
+											<td class="text-center align-middle">{{ dispo.maxSeatLunch }}</td>
+											<td class="text-center align-middle">{{ dispo.maxSeatDiner }}</td>
+											<td class="text-center align-middle">
+												<a href="{{ path('app_my_reservation_edit', {'id': dispo.id}) }}" class="text-center align-middle">
+													<span class="d-none d-sm-inline">Modifier</span>
+													<i class="fa-solid fa-pen-to-square d-sm-none"></i>
+												</a>
+											</td>
+											<td class="text-center align-middle">
+												<a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ dispo.id }}">
+													<span class="d-none d-sm-inline">Annuler</span>
+													<i class="fa-solid fa-trash d-sm-none"></i>
+												</a>
+
+												<div class="modal fade" id="confirmDeleteModal{{ dispo.id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel{{ dispo.id }}" aria-hidden="true">
+													<div class="modal-dialog modal-delete">
+														<div class="modal-content">
+															<div class="modal-header">
+																<h5 class="modal-title" id="confirmDeleteModalLabel{{ dispo.id }}">Confirmation de suppression</h5>
+																<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+															</div>
+															<div class="modal-body">
+																Êtes-vous sûr de vouloir supprimer cette réservation ?
+															</div>
+															<div class="modal-footer">
+																<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+																<form action="{{ path('app_my_reservation_cancel', {'id': dispo.id}) }}" method="post">
+																	<button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+																</form>
+															</div>
+														</div>
+													</div>
+												</div>
+											</td>
+										</tr>
+									{% endfor %}
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{{ knp_pagination_render(reservationsDay) }}

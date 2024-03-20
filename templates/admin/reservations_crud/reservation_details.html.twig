@@ -7,7 +7,11 @@
 		{% if app.request.query.get('modifiée') %}
 			<div class="flash-success">La réservation a bien été modifiée</div>
 	{% endif %}
-
+	<div class="container mb-3">
+		<a href="{{ path('app_admin') }}">
+			<i class="fa-solid fa-arrow-left fa-xl"></i>
+		</a>
+	</div>
 	<h2 class='m-3'>Réservations du
 		{{ date | format_datetime('full', 'none', locale='fr') }}</h2>
 

@@ -6,10 +6,11 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Form\Extension\Core\Type\TelType;
 
 class RegisterType extends AbstractType
 {
@@ -29,8 +30,16 @@ class RegisterType extends AbstractType
             'first_options'  => ['label' => 'Mot de passe'],
             'second_options' => ['label' => 'Confirmer votre mot de passe'],
             ])
-
-        ;
+/*             ->add('roles', ChoiceType::class, [
+                'choices'  => [
+                    'Utilisateur' => 'ROLE_USER',
+                    'Valideur' => 'ROLE_VALIDEUR',
+                    'Administrateur' => 'ROLE_ADMIN'
+                ],
+                'multiple' => true, // permet à l'utilisateur de choisir plusieurs rôles
+                'expanded' => true, // affiche les choix sous forme de boutons radio ou de cases à cocher
+            ]) */
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

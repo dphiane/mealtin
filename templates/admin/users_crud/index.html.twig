@@ -1,9 +1,14 @@
 {% extends '/admin/base_admin.html.twig' %}
 
-{% block title %}Admin utilisateurs{% endblock %}
+{% block title %}Admin utilisateurs
+{% endblock %}
 
-{% block body %}¨
-	
+{% block body %}
+	<div class="container mb-3">
+		<a href="{{ path('app_admin') }}">
+			<i class="fa-solid fa-arrow-left fa-xl"></i>
+		</a>
+	</div>
 	<h2 class='m-3'>Utilisateurs</h2>
 
 	<div class="mask d-flex align-items-center h-100 m-3" style="background-color: rgba(0,0,0,.25);">
@@ -17,8 +22,7 @@
 								<th class="text-center align-middle">Nom</th>
 								<th class="text-center align-middle">Prénom</th>
 								<th class="text-center align-middle">Email</th>
-								<th class="d-none d-sm-table-cell text-center align-middle">Modifier</th>
-								<th class="d-none d-sm-table-cell text-center align-middle">Annuler</th>
+								<th class="d-none d-sm-table-cell text-center align-middle"></th>
 							</thead>
 							<tbody>
 								{% for user in users %}
@@ -27,36 +31,10 @@
 										<td class="text-center align-middle">{{ user.firstname }}</td>
 										<td class="text-center align-middle">{{ user.email }}</td>
 										<td class="text-center align-middle">
-											<a href="{{ path('app_my_reservation_edit', {'id': user.id}) }}" class="text-center align-middle">
-												<span class="d-none d-sm-inline">Modifier</span>
+											<a href="{{ path('app_admin_user_details', {'id': user.id}) }}" class="text-center align-middle">
+												<span class="d-none d-sm-inline">Informations</span>
 												<i class="fa-solid fa-pen-to-square d-sm-none"></i>
 											</a>
-										</td>
-										<td class="text-center align-middle">
-											<a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ user.id }}">
-												<span class="d-none d-sm-inline">Annuler</span>
-												<i class="fa-solid fa-trash d-sm-none"></i>
-											</a>
-
-											<div class="modal fade" id="confirmDeleteModal{{ user.id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel{{ user.id }}" aria-hidden="true">
-												<div class="modal-dialog modal-delete">
-													<div class="modal-content">
-														<div class="modal-header">
-															<h5 class="modal-title" id="confirmDeleteModalLabel{{ user.id }}">Confirmation de suppression</h5>
-															<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-														</div>
-														<div class="modal-body">
-															Êtes-vous sûr de vouloir supprimer cette réservation ?
-														</div>
-														<div class="modal-footer">
-															<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-															<form action="{{ path('app_my_reservation_cancel', {'id': user.id}) }}" method="post">
-																<button type="submit" class="btn btn-danger">Confirmer la suppression</button>
-															</form>
-														</div>
-													</div>
-												</div>
-											</div>
 										</td>
 									</tr>
 
@@ -69,4 +47,3 @@
 		</div>
 	</div>
 {% endblock %}
-

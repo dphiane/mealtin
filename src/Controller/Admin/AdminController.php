@@ -8,11 +8,13 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'app_admin')]
+    #[IsGranted('ROLE_ADMIN', message: 'You are not allowed to access the admin dashboard.')]
     public function index(ReservationRepository $reservationRepository, Request $request, PaginatorInterface $paginator): Response
     {
         $today = new \DateTimeImmutable();

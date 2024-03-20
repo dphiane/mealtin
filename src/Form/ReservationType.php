@@ -43,7 +43,7 @@ class ReservationType extends AbstractType
                 'input' => 'datetime_immutable',
                 'widget' => 'choice',
                 'hours' => ['12' => 12, '13' => 13, '19' => 19,'20'=>20], 
-                'minutes' => ['00'=>0, '15'=>15, '30'=>30, '45'=>45],    
+                'minutes' => ['00'=>0, '15'=>15, '30'=>30, '45'=>45],          
             ])
             ->add('howManyGuest', ChoiceType::class, [
                 'label' => 'Nombre de personnes',

@@ -15,7 +15,6 @@ security:
             migrate_from:
                 - bcrypt # uses the "bcrypt" hasher with the default options
                 - legacy # uses the "legacy" hasher configured above
-                
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
@@ -23,11 +22,31 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+        app_admin_provider:
+            entity: 
+                class: App\Entity\Admin
+                property: username
     firewalls:
-        
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        admin:
+            pattern: ^/admin
+            provider: app_admin_provider
+            form_login:
+                login_path: app_admin_login
+                check_path: app_admin_login
+                enable_csrf: true
+                default_target_path: /admin
+            remember_me:
+                secret: '%kernel.secret%'
+            custom_authenticator: App\Security\AdminAuthenticator
+            entry_point: App\Security\AdminAuthenticator
+
+            logout:
+                path: app_logout  # Redirection après la connexion pour les administrateurs
+
         main:
             lazy: true
             provider: app_user_provider
@@ -39,24 +58,29 @@ security:
                 secret: '%kernel.secret%'
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
+        # where to redirect after logout
+        # target: app_any_route
             login_throttling:
                 max_attempts: 3          # per minute ...
                 interval: '10 minutes' 
-
             entry_point: App\Security\AuthenticationEntryPoint
+            access_denied_handler: App\Security\AccessDeniedHandler
+
+       
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin-login, roles: PUBLIC_ACCESS }
+        - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+
 
 when@test:
     security:

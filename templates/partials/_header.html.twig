@@ -23,8 +23,10 @@
 				</button>
 				<div class="collapse navbar-collapse justify-content-center" id="navbarTogglerDemo02">
 					<ul class="navbar-nav mb-2 mb-lg-0">
+
 						<li class="nav-item {{ path('app_home')| is_active_uri}}">
-							<a class="nav-link text-center" href="{{path('app_home')}}">Accueil<span></span></a>
+							<a class="nav-link text-center" href="{{path('app_home')}}">Accueil<span></span>
+							</a>
 						</li>
 						<li class="nav-item {{ path('app_menu')| is_active_uri}}">
 							<a class="nav-link text-center" href="{{ path('app_menu')}}">Notre carte</a>
@@ -67,6 +69,9 @@
 									</li>
 									<li>
 										<a class="text-center dropdown-item" href="{{ path('app_login')}}">Se connecter</a>
+									</li>
+									<li>
+										<a class="text-center dropdown-item" href="{{ path('app_admin_login')}}">Admin</a>
 									</li>
 								{% endif %}
 							</ul>

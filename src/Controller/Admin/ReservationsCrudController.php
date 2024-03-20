@@ -16,9 +16,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('admin')]
+#[IsGranted('ROLE_ADMIN', message: 'You are not allowed to access the admin dashboard.')]
 class ReservationsCrudController extends AbstractController
 {
     #[Route('/reservations', name: 'app_admin_reservations')]
@@ -90,7 +92,7 @@ class ReservationsCrudController extends AbstractController
             }
         }
 
-        return $this->render('my_reservation/edit.html.twig', [
+        return $this->render('admin/reservations_crud/edit_reservation.html.twig', [
             'reservationForm' => $reservationForm->createView(),
             'dateReservation' => $dateReservation
         ]);

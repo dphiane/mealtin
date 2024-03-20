@@ -9,15 +9,11 @@
 			</button>
 			<div class="collapse navbar-collapse justify-content-center" id="navbarTogglerDemo02">
 				<ul class="navbar-nav mb-2 mb-lg-0">
-					<li class="nav-item {{ path('app_home')| is_active_uri}}">
-						<a class="nav-link text-center" href="{{path('app_home')}}">Accueil<span></span>
-						</a>
-					</li>
 					<li>
 						<a class="nav-link text-center" href="{{ path('app_admin') }}">Réservations</a>
 					</li>
 					<li>
-						<a class="nav-link text-center" href="{{ path('app_user_crud') }}">Utilisateurs</a>
+						<a class="nav-link text-center" href="{{ path('app_admin_users') }}">Utilisateurs</a>
 					</li>
 					<li>
 						<a class="nav-link text-center" href="{{ path('app_logout') }}">Se déconnecter</a>

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin login
+{% endblock %}
+
+{% block body %}
+
+	<div class="form">
+		<form method="post" class="mx-3">
+			{% if error %}
+				<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+			{% endif %}
+
+			<h2 class="mb-3 font-weight-normal">Se connecter en tant qu'administrateur</h2>
+			<label for="inputUsername">Nom d'utilisateur</label>
+			<input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control mb-3" autocomplete="username" required autofocus>
+
+			<div class="toggle-password-container login-password-container">
+				<label for="inputPassword">Mot de passe</label>
+				<input type="password" name="password" id="inputPassword" class="form-control mb-3" autocomplete="current-password" required {{ stimulus_controller('symfony/ux-toggle-password/toggle-password', { buttonClasses: ['toggle-password-button'],hiddenLabel: 'Masquer',visibleLabel: 'Afficher' } ) }}>
+
+			</div>
+
+			<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+			<div class="d-flex align-items-center mb-3 flex-sm-row flex-column">
+
+				<button class="btn btn-primary me-2" type="submit">Connection</button>
+				<div class="d-flex flex-column">
+					<small>
+						<a href="{{path('app_forgot_password_request')}}">Mot de passe oublié ?</a>
+					</small>
+				</div>
+			</div>
+
+		</form>
+	</div>
+{% endblock %}

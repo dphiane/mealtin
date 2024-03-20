@@ -1,0 +1,7 @@
+doctrine_fixtures:
+    loaders:
+        default:
+            fixtures:
+                - App\DataFixtures\UserFixtures
+                - App\DataFixtures\AppFixtures
+                - App\DataFixtures\ReservationFixtures

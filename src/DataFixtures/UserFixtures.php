@@ -18,7 +18,7 @@ class UserFixtures extends Fixture
         // $product = new Product();
         // $manager->persist($product);
         $faker = Factory::create("fr_FR");
-        for($i=0; $i < 10 ; $i++){
+        for($i=0; $i < 1 ; $i++){
 
             $user =new User();
             //$password = $this->hasher->hashPassword($user,$faker->password(6));

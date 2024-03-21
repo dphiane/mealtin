@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use DateTime;
 use Faker\Factory;
 use DateTimeImmutable;
 use App\Entity\Reservation;
@@ -13,6 +12,8 @@ use App\Repository\ReservationRepository;
 use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 
+// La création de fixture peuvent générer bug car vous aller tomber sur des disponibilité n'ayant pas assez de place pour la réservation
+// php bin/console doctrine:fixtures:load --append
 class ReservationFixtures extends Fixture
 {
     public function __construct(private ReservationService $reservationService, private ReservationRepository $reservationRepository,private UserRepository $userRepository)
@@ -24,7 +25,7 @@ class ReservationFixtures extends Fixture
 
         $faker = Factory::create();
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             $date = \DateTimeImmutable::createFromMutable($faker->dateTimeBetween('now', '+2 month'));
             $reservations = $this->reservationRepository->findOneBy(['date' => $date]);
             $users= $this->userRepository->findAll();

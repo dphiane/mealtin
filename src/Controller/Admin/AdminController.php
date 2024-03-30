@@ -5,11 +5,11 @@ namespace App\Controller\Admin;
 use App\Repository\ReservationRepository;
 use Doctrine\Common\Collections\Criteria;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AdminController extends AbstractController
 {
@@ -37,9 +37,10 @@ class AdminController extends AbstractController
             $request->query->getInt('page', 1),
             15 // Définir le nombre de réservations par page
         );
-        //dd($reservationsPerMonth);
+
+        // dd($reservationsPerMonth);
         return $this->render('admin/index.html.twig', [
-            'reservationsPerMonth' => $reservationsPerMonth
+            'reservationsPerMonth' => $reservationsPerMonth,
         ]);
     }
 }

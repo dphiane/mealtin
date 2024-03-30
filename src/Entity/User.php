@@ -22,7 +22,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank]
-    #[Assert\Email(message:"Veuillez taper un email valide")]
+    #[Assert\Email(message: 'Veuillez taper un email valide')]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -34,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[Assert\Length(min: 6, minMessage: 'Le mot de passe doit faire au moins 6 caractères.')]
-    private ?string $newPassword=null;
+    private ?string $newPassword = null;
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
@@ -49,10 +49,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 6,)]
+    #[Assert\Length(min: 6, )]
     #[Assert\Regex(
-        pattern:"/^0[1-9](?:\d{2}){4}$/",
-        message:"Le numéro de téléphone n'est pas valide.")]
+        pattern: "/^0[1-9](?:\d{2}){4}$/",
+        message: "Le numéro de téléphone n'est pas valide.")]
     private ?string $telephone = null;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user')]
@@ -62,7 +62,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->reservations = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -213,7 +212,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * Get the value of newPassword
+     * Get the value of newPassword.
      */
     public function getNewPassword(): ?string
     {
@@ -221,11 +220,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * Set the value of newPassword
-     *
-     * @return  self
+     * Set the value of newPassword.
      */
-    public function setNewPassword($newPassword): self
+    public function setNewPassword(string $newPassword): self
     {
         $this->newPassword = $newPassword;
 

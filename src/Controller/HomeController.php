@@ -14,12 +14,14 @@ class HomeController extends AbstractController
         return $this->render('home/index.html.twig', [
         ]);
     }
+
     #[Route('/menu', name: 'app_menu')]
     public function menu(): Response
     {
         return $this->render('home/menu.html.twig', [
         ]);
     }
+
     #[Route('/gallerie', name: 'app_gallery')]
     public function gallery(): Response
     {

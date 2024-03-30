@@ -2,22 +2,18 @@
 
 namespace App\Controller\Admin;
 
-use Exception;
-use DateTimeImmutable;
 use App\Form\ReservationType;
+use App\Repository\DisponibilityRepository;
+use App\Repository\ReservationRepository;
 use App\Service\EmailService;
 use App\Service\ReservationService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\ReservationRepository;
-use App\Repository\DisponibilityRepository;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('admin')]
 #[IsGranted('ROLE_ADMIN', message: 'You are not allowed to access the admin dashboard.')]
@@ -41,65 +37,67 @@ class ReservationsCrudController extends AbstractController
             $request->query->getInt('page', 1),
             15 // Définir le nombre de réservations par page
         );
-        //dd($reservationsPerMonth);
+
+        // dd($reservationsPerMonth);
         return $this->render('admin/index.html.twig', [
             'reservationsPerMonth' => $reservationsPerMonth,
-            'allReservations' => $allReservations
+            'allReservations' => $allReservations,
         ]);
     }
 
     #[Route('/reservation/{date}', name: 'app_admin_reservation_crud')]
-    public function details(ReservationRepository $reservationRepository, $date): Response
+    public function details(ReservationRepository $reservationRepository, string $date): Response
     {
-        $date = new DateTimeImmutable($date);
+        $date = new \DateTimeImmutable($date);
         $reservations = $reservationRepository->findBy(['date' => $date]);
 
         return $this->render('admin/reservations_crud/reservation_details.html.twig', [
             'reservations' => $reservations,
-            'date' => $date
+            'date' => $date,
         ]);
     }
 
     #[Route('/modifier-reservation/{id}', name: 'app_admin_reservation_edit')]
-    public function editReservation($id, ReservationService $reservationService, ReservationRepository $reservationRepository, Request $request, DisponibilityRepository $disponibilityRepository, EntityManagerInterface $entityManagerInterface, EmailService $emailService): Response
+    public function editReservation(int $id, ReservationService $reservationService, ReservationRepository $reservationRepository, Request $request, DisponibilityRepository $disponibilityRepository, EntityManagerInterface $entityManagerInterface, EmailService $emailService): Response
     {
         $reservation = $reservationRepository->findOneBy(['id' => $id]);
         $originalReservation = clone $reservation;
         $disponibility = $disponibilityRepository->findOneBy(['id' => $reservation->getDisponibility()]);
         $reservationForm = $this->createForm(ReservationType::class, $reservation);
-        
+
         $dateReservation = $reservation->getDate()->format('Y-m-d');
-        
+
         $reservationForm->handleRequest($request);
         if ($reservationForm->isSubmitted() && $reservationForm->isValid()) {
-            
             try {
                 $reservations = $reservationRepository->findOneBy(['date' => $reservation->getDate()]);
-                
-                $reservationService->handleEditReservation($disponibility, $originalReservation, $reservations,$reservation);
+
+                $reservationService->handleEditReservation($disponibility, $originalReservation, $reservations, $reservation);
 
                 $entityManagerInterface->persist($disponibility);
                 $entityManagerInterface->persist($reservation);
                 $entityManagerInterface->flush();
 
-                //$emailService->sendConfirmModifyEmail($reservation->getUser()->getEmail(),$reservation->getDate(),$reservation->getTime(),$reservation->getHowManyGuest());
-                $this->addFlash("success", "La réservation a bien été modifiée");
+                // $emailService->sendConfirmModifyEmail($reservation->getUser()->getEmail(),$reservation->getDate(),$reservation->getTime(),$reservation->getHowManyGuest());
+                $this->addFlash('success', 'La réservation a bien été modifiée');
+
                 return $this->redirectToRoute('app_admin_reservation_crud', ['date' => $dateReservation, 'modifiée' => 1]);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // Afficher les erreurs
-                $this->addFlash("warning", $e->getMessage());
-                return new Response("Bad Request", 400);
+                $this->addFlash('warning', $e->getMessage());
+
+                return new Response('Bad Request', 400);
             }
         }
 
         return $this->render('admin/reservations_crud/edit_reservation.html.twig', [
             'reservationForm' => $reservationForm->createView(),
-            'dateReservation' => $dateReservation
+            'dateReservation' => $dateReservation,
         ]);
     }
 
-    #[Route('/annuler-reservation/{id}', name: 'app_admin_reservation_cancel')]
-    public function cancelReservation($id, ReservationRepository $reservationRepository, EntityManagerInterface $entityManagerInterface, Request $request)
+    #[Route('/annuler-reservation/{id}', name: 'app_admin_reservation_cancel')] 
+    public function cancelReservation(int $id, ReservationRepository $reservationRepository, EntityManagerInterface $entityManagerInterface, Request $request):Response
     {
         // Récupérer l'entité de la réservation à supprimer
         $reservation = $reservationRepository->find($id);
@@ -114,6 +112,7 @@ class ReservationsCrudController extends AbstractController
 
         // Répondre avec une réponse de succès
         $this->addFlash('success', 'La réservation a bien été annulée');
+
         return $this->redirect($request->headers->get('referer'));
     }
 }

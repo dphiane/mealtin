@@ -22,7 +22,9 @@
                                     <a href="{{ path('app_admin_reservation_crud', {'date': date | date('Y-m-d')}) }}">
                                         <tr onclick="window.location='{{ path('app_admin_reservation_crud', {'date': date | date('Y-m-d')}) }}';"  class="reservation-link">
                                             <td class="text-center align-middle">{{ date | date('d/m/Y')}}</td>
-                                            {% set reservation = items[0] %}
+                                            {# {% set reservation = items[0] %} #}
+                                            {% set reservation = items | first %}
+                                             
                                             <td class="text-center align-middle d-none d-sm-table-cell">{{13 - reservation.disponibility.maxReservationLunch }}</td>
                                             <td class="text-center align-middle">{{ reservation.disponibility.maxSeatLunch }}</td>
                                             <td class="text-center align-middle d-none d-sm-table-cell">{{13 - reservation.disponibility.maxReservationDiner }}</td>

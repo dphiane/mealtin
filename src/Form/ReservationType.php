@@ -2,17 +2,16 @@
 
 namespace App\Form;
 
-use DateTimeImmutable;
 use App\Entity\Reservation;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
+use DateTimeImmutable;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ReservationType extends AbstractType
 {
@@ -20,8 +19,8 @@ class ReservationType extends AbstractType
     {
         $builder
             ->add('date', TextType::class, [
-                'attr' => ['data-provide' => "datepicker"],
-                'data' => date('Y-m-d')
+                'attr' => ['data-provide' => 'datepicker'],
+                'data' => date('Y-m-d'),
             ])
             // Ajouter un événement de formulaire pour modifier la valeur de 'date'
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
@@ -31,41 +30,41 @@ class ReservationType extends AbstractType
                 if (isset($data['date'])) {
                     // Modifier la valeur de 'date' string to DateTimeImmutable
                     $dateString = $data['date'];
-                    $date = new DateTimeImmutable($dateString);
+                    $date = new \DateTimeImmutable($dateString);
                     $data['date'] = $date;
                     $event->setData($data);
                 }
             })
-            //->add('date') décommenter et désactiver jquery et le add->('date') plus haut pour gérer les résa via symfony et pas js.
-            
+            // ->add('date') décommenter et désactiver jquery et le add->('date') plus haut pour gérer les résa via symfony et pas js.
+
             ->add('time', TimeType::class, [
                 'label' => 'Heure',
                 'input' => 'datetime_immutable',
                 'widget' => 'choice',
-                'hours' => ['12' => 12, '13' => 13, '19' => 19,'20'=>20], 
-                'minutes' => ['00'=>0, '15'=>15, '30'=>30, '45'=>45],          
+                'hours' => ['12' => 12, '13' => 13, '19' => 19, '20' => 20],
+                'minutes' => ['00' => 0, '15' => 15, '30' => 30, '45' => 45],
             ])
             ->add('howManyGuest', ChoiceType::class, [
                 'label' => 'Nombre de personnes',
                 'choices' => [
-                    "1 couvert" => 1,
-                    "2 couverts" => 2,
-                    "3 couverts" => 3,
-                    "4 couverts" => 4,
-                    "5 couverts" => 5,
-                    "6 couverts" => 6,
-                    "7 couverts" => 7,
-                    "8 couverts" => 8,
-                    "9 couverts" => 9,
-                ]
-                ]);
+                    '1 couvert' => 1,
+                    '2 couverts' => 2,
+                    '3 couverts' => 3,
+                    '4 couverts' => 4,
+                    '5 couverts' => 5,
+                    '6 couverts' => 6,
+                    '7 couverts' => 7,
+                    '8 couverts' => 8,
+                    '9 couverts' => 9,
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Reservation::class,
-            'time' => null
+            'time' => null,
         ]);
     }
 }

@@ -31,7 +31,7 @@
 									{% if reservation.date|date('Y-m-d') >= "now"|date('Y-m-d') %}
 										<tr>
 											<td class="text-center align-middle">{{ reservation.date | date("d/m/Y") }}</td>
-											<td class="text-center align-middle">{{ reservation.time |date('H:i') }}</td>
+											<td class="text-center align-middle">{{ reservation.time | date('H:i') }}</td>
 											<td class="text-center align-middle">{{ reservation.howManyGuest }}</td>
 											<td class="text-center align-middle">
 												<a href="{{ path('app_my_reservation_edit', {'id': reservation.id}) }}" class="text-center align-middle">

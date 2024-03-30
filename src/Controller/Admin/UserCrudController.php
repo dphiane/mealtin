@@ -2,18 +2,16 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\User;
 use App\Form\RegisterType;
+use App\Repository\ReservationRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\ReservationRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 #[Route('admin')]
 #[IsGranted('ROLE_ADMIN', message: 'You are not allowed to access the admin dashboard.')]
@@ -23,15 +21,15 @@ class UserCrudController extends AbstractController
     public function index(UserRepository $userRepository): Response
     {
         $users = $userRepository->findAll();
+
         return $this->render('admin/users_crud/index.html.twig', [
             'users' => $users,
         ]);
     }
 
     #[Route('/user-details/{id}', name: 'app_admin_user_details')]
-    public function details($id, UserRepository $userRepository, ReservationRepository $reservationRepository, PaginatorInterface $paginator, Request $request)
+    public function details(int $id, UserRepository $userRepository, ReservationRepository $reservationRepository, PaginatorInterface $paginator, Request $request):Response
     {
-
         $user = $userRepository->findOneBy(['id' => $id]);
         $reservations = $reservationRepository->findBy(['user' => $user]);
 
@@ -46,12 +44,12 @@ class UserCrudController extends AbstractController
 
         return $this->render('admin/users_crud/user_details.html.twig', [
             'user' => $user,
-            'reservations' => $reservationsPaginate
+            'reservations' => $reservationsPaginate,
         ]);
     }
 
     #[Route('/user-edit/{id}', name: 'app_admin_user_edit')]
-    public function edit(UserRepository $userRepository, $id, Request $request)
+    public function edit(UserRepository $userRepository,int $id, Request $request): Response
     {
         $user = $userRepository->findOneBy(['id' => $id]);
         $form = $this->createForm(RegisterType::class, $user);
@@ -66,15 +64,15 @@ class UserCrudController extends AbstractController
 
         return $this->render('admin/users_crud/edit.html.twig', [
             'form' => $form,
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
     #[Route('/supprimer-le-compte/{id}', name: 'app_admin_user_delete')]
-    public function cancelReservation($id, EntityManagerInterface $entityManagerInterface,UserRepository $userRepository)
+    public function cancelReservation(int $id, EntityManagerInterface $entityManagerInterface, UserRepository $userRepository): Response
     {
         $user = $userRepository->findOneBy(['id' => $id]);
-        
+
         // Vérifier si la réservation existe
         if (!$user) {
             throw $this->createNotFoundException('Utilisateur non trouvé');
@@ -86,6 +84,7 @@ class UserCrudController extends AbstractController
 
         // Répondre avec une réponse de succès
         $this->addFlash('success', 'L\'utilisateur a bien été supprimer');
+
         return $this->redirectToRoute('app_admin_users');
     }
 }

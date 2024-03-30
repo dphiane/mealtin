@@ -4,19 +4,19 @@ namespace App\Controller;
 
 use App\Form\RegisterType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
 {
     #[Route('/mon-profile', name: 'app_user')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function currentUserProfile(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasherInterface,): Response
+    public function currentUserProfile(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasherInterface): Response
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -32,11 +32,12 @@ class UserController extends AbstractController
             }
             $em->flush();
             $this->addFlash('success', 'Modification sauvegardées');
+
             return $this->redirectToRoute('app_current_user');
         }
+
         return $this->render('user/index.html.twig', [
-            'form' => $userForm->createView(), 
+            'form' => $userForm->createView(),
         ]);
     }
-
 }

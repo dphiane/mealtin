@@ -5,19 +5,18 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\RegisterType;
 use App\Security\EmailVerifier;
-use Symfony\Component\Mime\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-
 
 class RegisterController extends AbstractController
 {
@@ -29,7 +28,7 @@ class RegisterController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function index(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager,UserAuthenticatorInterface $userAuthenticatorInterface): Response
+    public function index(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, UserAuthenticatorInterface $userAuthenticatorInterface): Response
     {
         $user = new User();
         $form = $this->createForm(RegisterType::class, $user);
@@ -52,8 +51,8 @@ class RegisterController extends AbstractController
                     ->subject('Confirmer votre email')
                     ->htmlTemplate('register/confirmation_email.html.twig')
             );
-            
-            $this->addFlash('success','Merci de votre inscription.');
+
+            $this->addFlash('success', 'Merci de votre inscription.');
 
             return $userAuthenticatorInterface->authenticateUser($user, $this->authenticator, $request);
         }

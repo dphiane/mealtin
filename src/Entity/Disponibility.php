@@ -117,5 +117,4 @@ class Disponibility
 
         return $this;
     }
-
 }

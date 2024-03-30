@@ -11,8 +11,7 @@ class AdminLoginController extends AbstractController
 {
     #[Route(path: '/admin-login', name: 'app_admin_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
-    {   
-
+    {
         // if ($this->getUser()) {
         //     return $this->redirectToRoute('target_path');
         // }

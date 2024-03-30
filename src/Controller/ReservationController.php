@@ -2,20 +2,18 @@
 
 namespace App\Controller;
 
-use DateTime;
-use Exception;
-use App\Entity\Reservation;
 use App\Entity\Disponibility;
+use App\Entity\Reservation;
 use App\Form\ReservationType;
+use App\Repository\ReservationRepository;
 use App\Service\EmailService;
 use App\Service\ReservationService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\ReservationRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ReservationController extends AbstractController
 {
@@ -27,61 +25,47 @@ class ReservationController extends AbstractController
         $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
         $user = $this->getUser();
-        $today = new DateTime("now");
+        $today = new \DateTimeImmutable('now');
         $timeOfToday = $today->format('H:i');
+        
         if ($form->isSubmitted() && $form->isValid()) {
             $date = $reservation->getDate();
             $reservations = $reservationRepository->findOneBy(['date' => $date]);
-            try{
-                $reservationService->validateTimeAndDate($reservation->getTime()->format("H:i"),$date,$today,$timeOfToday);
-                //si une date possède déja une entity Disponibility
+            try {
+                $reservationService->isDateAndTimeValid($reservation->getTime()->format('H:i'), $date, $today, $timeOfToday);
+                // si une date possède déja une entity Disponibility
                 if ($reservations) {
-                    $disponibility =  $reservationService->checkDisponibilityAndUpdateEntity($reservations->getDisponibility(), $reservation);
-
+                    $disponibility = $reservationService->checkDisponibilityAndUpdateEntity($reservations->getDisponibility(), $reservation);
                 } else {
-                    
                     // Si aucune réservation n'est trouvée, créez une nouvelle disponibilité
                     $disponibility = new Disponibility();
-                    $reservationTime = $reservation->getTime()->format("H:i");
-                    $howManyGuest = $reservation->getHowManyGuest();
-    
-                    if ($reservationTime >= "12:00" && $reservationTime <= "14:00") {
-                        $reservationService->newReservationLunch($disponibility,$howManyGuest);
-    
-                    } elseif ($reservationTime >= "19:00" && $reservationTime <= "21:00") {
-                        $reservationService->newReservationDiner($disponibility,$howManyGuest);
-    
-                    } else {
-                        $this->addFlash("warning", "Veuillez entrer un horaire valide !");
-                        return new Response("Bad Request", 400);
-                    }
+                    $reservationService->handleNewReservation($disponibility,$reservation);
                 }
-    
+
                 // Attribuez cette disponibilité à la réservation créée
                 if (!$entityManagerInterface->contains($disponibility)) {
                     $entityManagerInterface->persist($disponibility);
                 }
-    
+
                 // Associe $disponibility à $reservation (si nécessaire)
                 $reservation->setUser($user);
                 $reservation->setDisponibility($disponibility);
-    
+
                 // Persiste ensuite $reservation
                 if (!$entityManagerInterface->contains($reservation)) {
                     $entityManagerInterface->persist($reservation);
                 }
                 // Flush des changements
                 $entityManagerInterface->flush();
-                $this->addFlash("success", "Votre réservation a bien été enregistrée");
-    
-                //$emailService->sendConfirmNewReservation($reservation->getUser()->getEmail(), $reservation->getDate(), $reservation->getTime(), $reservation->getHowManyGuest());
-    
-                return $this->redirectToRoute('app_my_reservation', ["success" => 1]);
+                $this->addFlash('success', 'Votre réservation a bien été enregistrée');
 
-            }catch(Exception $e) {
+                // $emailService->sendConfirmNewReservation($reservation->getUser()->getEmail(), $reservation->getDate(), $reservation->getTime(), $reservation->getHowManyGuest());
+
+                return $this->redirectToRoute('app_my_reservation', ['success' => 1]);
+            } catch (\Exception $e) {
                 // Gérez les erreurs de manière appropriée
-                $this->addFlash("warning", $e->getMessage());
-                return new Response("Bad Request", 400);
+                $this->addFlash('warning', $e->getMessage());
+                return new Response('Bad Request', 400);
             }
         }
 

@@ -3,23 +3,23 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use Symfony\Component\Mime\Address;
 use App\Form\ChangePasswordFormType;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Form\ResetPasswordRequestFormType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 #[Route('/reset-password')]
 class ResetPasswordController extends AbstractController
@@ -36,7 +36,7 @@ class ResetPasswordController extends AbstractController
      * Display & process form to request a password reset.
      */
     #[Route('', name: 'app_forgot_password_request')]
-    public function request(RateLimiterFactory $passwordRecoveryLimiter, Request $request, MailerInterface $mailer, TranslatorInterface $translator,): Response
+    public function request(RateLimiterFactory $passwordRecoveryLimiter, Request $request, MailerInterface $mailer, TranslatorInterface $translator): Response
     {
         $limiter = $passwordRecoveryLimiter->create($request->getClientIp());
         if (false === $limiter->consume(1)->isAccepted()) {
@@ -56,7 +56,7 @@ class ResetPasswordController extends AbstractController
 
         return $this->render('reset_password/request.html.twig', [
             'requestForm' => $form->createView(),
-        ],$response);
+        ], $response);
     }
 
     /**
@@ -80,7 +80,7 @@ class ResetPasswordController extends AbstractController
      * Validates and process the reset URL that the user clicked in their email.
      */
     #[Route('/reset/{token}', name: 'app_reset_password')]
-    public function reset(RateLimiterFactory $passwordRecoveryLimiter, Request $request, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, string $token = null): Response
+    public function reset(RateLimiterFactory $passwordRecoveryLimiter, Request $request, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, ?string $token = null): Response
     {
         $limiter = $passwordRecoveryLimiter->create($request->getClientIp());
         if (false === $limiter->consume(1)->isAccepted()) {
@@ -168,7 +168,7 @@ class ResetPasswordController extends AbstractController
         }
 
         $email = (new TemplatedEmail())
-            ->from(new Address('dphiane@yahoo.fr', "Restaurant"))
+            ->from(new Address('dphiane@yahoo.fr', 'Restaurant'))
             ->to($user->getEmail())
             ->subject('Votre demande de réinitialisation de mot de passe')
             ->htmlTemplate('reset_password/email.html.twig')

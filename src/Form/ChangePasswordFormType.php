@@ -22,7 +22,7 @@ class ChangePasswordFormType extends AbstractType
                         'autocomplete' => 'new-password',
                     ],
                 ],
-/*                 'constraints' => [
+                /*                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez entrer votre mot de passe',
                     ]),
@@ -34,13 +34,12 @@ class ChangePasswordFormType extends AbstractType
                     ]),
                 ], */
                 'first_options' => [
-                    
                     'label' => 'Votre nouveau mot de passe',
                 ],
                 'second_options' => [
                     'label' => 'Confirmer votre nouveau mot de passe',
                 ],
-                //'invalid_message' => 'Vos deux mot de passe doivent être identique.',
+                // 'invalid_message' => 'Vos deux mot de passe doivent être identique.',
                 // Instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,

@@ -2,24 +2,29 @@
 
 namespace App\Service;
 
-use Exception;
-use DateTimeImmutable;
-use App\Entity\Reservation;
 use App\Entity\Disponibility;
+use App\Entity\Reservation;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ReservationService extends AbstractController
 {
+    private const START_OF_SERVICE_LUNCH = "12:00";
+    private const END_OF_SERVICE_LUNCH = "14:00";
+    private const START_OF_SERVICE_DINER = "19:00";
+    private const END_OF_SERVICE_DINER = "21:00";
+
     public function __construct(
         private EntityManagerInterface $entityManager
     ) {
     }
 
-    public function handleEditReservation(Disponibility $disponibility, Reservation $originalReservation, $reservations, $modifyReservation)
+    public function handleEditReservation(Disponibility $disponibility, Reservation $originalReservation, ?Reservation $reservationAtThisDateToGetDispo, Reservation $modifyReservation): void
     {
         $oldDate = $originalReservation->getDate();
-        $reservationTime = $originalReservation->getTime()->format("H:i");
+        $reservationTime = $originalReservation->getTime()->format('H:i');
         $reservationHowManyGuest = $originalReservation->getHowManyGuest();
         $disponibilityMaxSeatDiner = $disponibility->getMaxSeatDiner();
         $disponibilityMaxSeatLunch = $disponibility->getMaxSeatLunch();
@@ -28,12 +33,12 @@ class ReservationService extends AbstractController
         $newReservationTimeFormated = $modifyReservation->getTime()->format('H:i');
         $newReservationHowManyGuest = $modifyReservation->getHowManyGuest();
         $newDate = $modifyReservation->getDate();
-        $today = new DateTimeImmutable("now");
+        $today = new \DateTimeImmutable('now');
         $timeOfToday = $today->format('H:i');
 
-        $this->validateTimeAndDate($newReservationTimeFormated, $newDate, $today, $timeOfToday);
+        $this->isDateAndTimeValid($newReservationTimeFormated, $newDate, $today, $timeOfToday);
 
-        if ($oldDate->format('Y-m-d') ===  $newDate->format('Y-m-d')) {
+        if ($oldDate->format('Y-m-d') === $newDate->format('Y-m-d')) {
             $this->handleEditReservationSameDay(
                 $reservationTime,
                 $newReservationTimeFormated,
@@ -46,10 +51,9 @@ class ReservationService extends AbstractController
                 $disponibilityMaxSeatLunch,
                 $reservationHowManyGuest
             );
-            //si déplacement de jour de réservation
         } else {
             $this->handleEditReservationDifferentDay(
-                $reservations,
+                $reservationAtThisDateToGetDispo,
                 $originalReservation,
                 $reservationTime,
                 $reservationHowManyGuest,
@@ -61,154 +65,154 @@ class ReservationService extends AbstractController
         }
     }
 
-    public function handleEditReservationDifferentDay($reservations, $originalReservation, $reservationTime, $reservationHowManyGuest, $disponibility, $modifyReservation, $newReservationTimeFormated, $newReservationHowManyGuest)
-    {
+    private function handleEditReservationDifferentDay(
+        ?Reservation $reservationAtThisDateToGetDispo,
+        Reservation $originalReservation,
+        string $reservationTime,
+        int $reservationHowManyGuest,
+        Disponibility $disponibility,
+        Reservation $modifyReservation,
+        string $newReservationTimeFormated,
+        int $newReservationHowManyGuest
+    ): void {
         // si une réservation à déja créer une entity Disponibility, on la récupère pour modifier les dispo
-        if ($reservations) {
+        if ($reservationAtThisDateToGetDispo != null) {
             $oldDisponibility = $originalReservation->getDisponibility();
-            $newDisponibility = $reservations->getDisponibility();
+            $newDisponibility = $reservationAtThisDateToGetDispo->getDisponibility();
 
-            if ($reservationTime >= '12:00' && $reservationTime <= '14:00') {
+            //On reset l'ancienne disponibility en fonction de l'ancienne heure de réservation
+            if ($this->isReservationForLunch($reservationTime)) {
                 $this->resetOldDisponibilityLunch($oldDisponibility, $reservationHowManyGuest);
-            } elseif ($reservationTime >= '19:00' && $reservationTime <= '21:00') {
+                $disponibilityReservation = $newDisponibility->getMaxReservationLunch();
+                $disponibilityMaxSeat = $newDisponibility->getMaxSeatLunch();
+            } elseif ($this->isReservationForDiner($reservationTime)) {
                 $this->resetOldDisponibilityDiner($oldDisponibility, $reservationHowManyGuest);
+                $disponibilityReservation = $newDisponibility->getMaxReservationDiner();
+                $disponibilityMaxSeat = $newDisponibility->getMaxSeatDiner();
             } else {
-                throw new Exception("Veuillez entrer un horaire valide !");
+                throw new \Exception('Veuillez entrer un horaire valide !');
             }
-
-            // Vérification des plages horaires de réservation
-            if ($reservationTime >= "12:00" && $reservationTime <= "14:00") {
-                $disponibilityReservation = $disponibility->getMaxReservationLunch();
-                $disponibilityMaxSeat = $disponibility->getMaxSeatLunch();
-            } elseif ($reservationTime >= "19:00" && $reservationTime <= "21:00") {
-                $disponibilityReservation = $disponibility->getMaxReservationDiner();
-                $disponibilityMaxSeat = $disponibility->getMaxSeatDiner();
-            } else {
-                // Gestion des horaires invalides
-                throw new Exception('Veuillez entrer des horaires valides !');
+            
+            // on set les nouvelles disponibilitées
+            if ($this->isReservationForLunch($newReservationTimeFormated)) {
+                $disponibilityReservation = $newDisponibility->getMaxReservationLunch();
+                $disponibilityMaxSeat = $newDisponibility->getMaxSeatLunch();
+            } elseif ($this->isReservationForDiner($newReservationTimeFormated)) {
+                $disponibilityReservation = $newDisponibility->getMaxReservationDiner();
+                $disponibilityMaxSeat = $newDisponibility->getMaxSeatDiner();
             }
 
             // Vérification de la disponibilité des places
             if ($disponibilityMaxSeat - $newReservationHowManyGuest < 0 || $disponibilityReservation - 1 < 0) {
-                throw new Exception('Malheureusement, nous n\'avons pas assez de places.');
+                throw new \Exception('Malheureusement, nous n\'avons pas assez de places.');
             }
             // mise a jour de la disponibilité en fonction des horaires indiqué
-            if ($newReservationTimeFormated >= '12:00' && $newReservationTimeFormated <= '14:00') {
+            if ($this->isReservationForLunch($newReservationTimeFormated)) {
                 $this->updateLunchDisponibilityWhenDateChange($newDisponibility, $newReservationHowManyGuest);
-            } elseif ($newReservationTimeFormated >= '19:00' && $newReservationTimeFormated <= '21:00') {
+            } elseif ($this->isReservationForDiner($newReservationTimeFormated)) {
                 $this->updateDinerDisponibilityWhenDateChange($newDisponibility, $newReservationHowManyGuest);
             } else {
-                throw new Exception("Une erreur est survenue lors de votre modification");
+                throw new \Exception('Une erreur est survenue lors de votre modification');
             }
             $modifyReservation->setDisponibility($newDisponibility);
 
-            // sinon on reset l'ancienne disponibility et créer un nouvelle instance 
+            // sinon on reset l'ancienne disponibility et créer un nouvelle instance
         } else {
             $newDisponibility = new Disponibility();
 
-            if ($reservationTime >= '12:00' && $reservationTime <= '14:00') {
+            if ($this->isReservationForLunch($reservationTime)) {
                 $this->resetOldDisponibilityLunch($disponibility, $reservationHowManyGuest);
-            } elseif ($reservationTime >= '19:00' && $reservationTime <= '21:00') {
+            } elseif ($this->isReservationForDiner($reservationTime)) {
                 $this->resetOldDisponibilityDiner($disponibility, $reservationHowManyGuest);
             } else {
-                throw new Exception("Veuillez entrer un horaire valide !");
+                throw new \Exception('Veuillez entrer un horaire valide !');
             }
 
-            if ($newReservationTimeFormated >= '12:00' && $newReservationTimeFormated <= '14:00') {
-                $this->newReservationLunch($newDisponibility, $newReservationHowManyGuest,);
-            } elseif ($newReservationTimeFormated >= '19:00' && $newReservationTimeFormated <= '21:00') {
-                $this->newReservationDiner($newDisponibility, $newReservationHowManyGuest);
+            if ($this->isReservationForLunch($newReservationTimeFormated)) {
+                $this->createNewReservationLunch($newDisponibility, $newReservationHowManyGuest);
+            } elseif ($this->isReservationForDiner($newReservationTimeFormated)) {
+                $this->createNewReservationDiner($newDisponibility, $newReservationHowManyGuest);
             } else {
-                throw new Exception("Une erreur est survenue lors de votre modification");
+                throw new \Exception('Une erreur est survenue lors de votre modification');
             }
+
             $this->entityManager->persist($newDisponibility);
             $this->entityManager->flush();
             $modifyReservation->setDisponibility($newDisponibility);
         }
     }
     
-    public function handleEditReservationSameDay($reservationTime, $newReservationTimeFormated, $disponibilityMaxSeatDiner, $newReservationHowManyGuest, $originalReservation, $disponibility, $disponibilityMaxReservationLunch, $disponibilityMaxReservationDiner, $disponibilityMaxSeatLunch, $reservationHowManyGuest)
-    {
-        //réservation du midi vers le soir
-        if ($reservationTime >= "12:00" && $reservationTime <= "14:00" && $newReservationTimeFormated >= "19:00" && $newReservationTimeFormated <= "21:00") {
-
-            if ($disponibilityMaxSeatDiner - $newReservationHowManyGuest >= 0) {
-                $this->setLunchToDiner($originalReservation, $newReservationHowManyGuest, $disponibility, $disponibilityMaxReservationLunch, $disponibilityMaxReservationDiner, $disponibilityMaxSeatLunch, $disponibilityMaxSeatDiner, $reservationHowManyGuest);
-            } else {
-                throw new \Exception("Malheuresement nous n'avons plus assez de place pour le diner");
-            }
-            //réservation du soir vers le midi
-        } elseif ($reservationTime >= "19:00" && $reservationTime <= "21:00" && $newReservationTimeFormated >= "12:00" && $newReservationTimeFormated <= "14:00") {
-
-            if ($disponibilityMaxSeatLunch - $newReservationHowManyGuest >= 0) {
-                $this->setDinerToLunch($originalReservation, $disponibility, $newReservationHowManyGuest, $disponibilityMaxReservationDiner, $disponibilityMaxReservationLunch, $disponibilityMaxSeatDiner, $disponibilityMaxSeatLunch, $reservationHowManyGuest);
-            } else {
-                throw new \Exception("Malheuresement nous n'avons plus assez de place pour le midi");
-            }
-        } else {
-            //réservation du midi non changé
-            if ($newReservationTimeFormated >= "12:00" && $newReservationTimeFormated <= "14:00") {
-
-                if ($disponibilityMaxSeatLunch - ($newReservationHowManyGuest - $reservationHowManyGuest) >= 0) {
-                    $this->setLunch($disponibility, $disponibilityMaxSeatLunch, $newReservationHowManyGuest, $reservationHowManyGuest, $originalReservation);
-                } else {
-                    throw new \Exception("Malheuresement nous n'avons plus assez de place");
-                }
-                //réservation du soir non changé
-            } elseif ($newReservationTimeFormated >= "19:00" && $newReservationTimeFormated <= "21:00") {
-
-                if ($disponibilityMaxSeatDiner - ($newReservationHowManyGuest - $reservationHowManyGuest) >= 0) {
-                    $this->setDiner($disponibility, $disponibilityMaxSeatDiner, $newReservationHowManyGuest, $reservationHowManyGuest, $originalReservation);
-                } else {
-                    throw new \Exception("Malheuresement nous n'avons plus assez de place");
-                }
-                // le petit malin a contourner le front!  
-            } else {
-                throw new \Exception("Veuillez respecter les crénaux horaires!");
-            }
-        }
-    }
-    public function updateDinerDisponibilityWhenDateChange($newDisponibility, $howManyGuest)
+    private function updateDinerDisponibilityWhenDateChange(Disponibility $newDisponibility, int $howManyGuest): void
     {
         $newDisponibility
             ->setMaxReservationDiner($newDisponibility->getMaxReservationDiner() - 1)
             ->setMaxSeatDiner($newDisponibility->getMaxSeatDiner() - $howManyGuest);
     }
-    public function updateLunchDisponibilityWhenDateChange($newDisponibility, $howManyGuest)
+
+    private function updateLunchDisponibilityWhenDateChange(Disponibility $newDisponibility, int $howManyGuest): void
     {
         $newDisponibility
             ->setMaxReservationLunch($newDisponibility->getMaxReservationLunch() - 1)
             ->setMaxSeatLunch($newDisponibility->getMaxSeatLunch() - $howManyGuest);
     }
-    //créer une nouvelle disponibility pour le midi
-    public function newReservationLunch($disponibility, $howManyGuest)
-    {
-        $disponibility
-            ->setMaxReservationLunch(12)
-            ->setMaxSeatLunch(40 - $howManyGuest)
-            ->setMaxReservationDiner(13)
-            ->setMaxSeatDiner(40);
+
+    private function handleEditReservationSameDay(
+        string $reservationTime,
+        string $newReservationTimeFormated,
+        int $disponibilityMaxSeatDiner,
+        int $newReservationHowManyGuest,
+        Reservation $originalReservation,
+        Disponibility $disponibility,
+        int $disponibilityMaxReservationLunch,
+        int $disponibilityMaxReservationDiner,
+        int $disponibilityMaxSeatLunch,
+        int $reservationHowManyGuest
+    ): void {
+        // réservation du midi vers le soir
+        if ($this->isMovingLunchToDiner($reservationTime, $newReservationTimeFormated)) {
+            if ($disponibilityMaxSeatDiner - $newReservationHowManyGuest >= 0) {
+                $this->moveLunchToDiner($originalReservation, $newReservationHowManyGuest, $disponibility, $disponibilityMaxReservationLunch, $disponibilityMaxReservationDiner, $disponibilityMaxSeatLunch, $disponibilityMaxSeatDiner, $reservationHowManyGuest);
+            } else {
+                throw new \Exception("Malheuresement nous n'avons plus assez de place pour le diner");
+            }
+            // réservation du soir vers le midi
+        } elseif ($this->isMovingDinerToLunch($reservationTime, $newReservationTimeFormated)) {
+            if ($disponibilityMaxSeatLunch - $newReservationHowManyGuest >= 0) {
+                $this->moveDinerToLunch($originalReservation, $disponibility, $newReservationHowManyGuest, $disponibilityMaxReservationDiner, $disponibilityMaxReservationLunch, $disponibilityMaxSeatDiner, $disponibilityMaxSeatLunch, $reservationHowManyGuest);
+            } else {
+                throw new \Exception("Malheuresement nous n'avons plus assez de place pour le midi");
+            }
+        } else {
+            // réservation du midi non changé
+            if ($this->isReservationForLunch($newReservationTimeFormated)) {
+                if ($disponibilityMaxSeatLunch - ($newReservationHowManyGuest - $reservationHowManyGuest) >= 0) {
+                    $this->updateSeatLunchAndHowManyGuest($disponibility, $disponibilityMaxSeatLunch, $newReservationHowManyGuest, $reservationHowManyGuest, $originalReservation);
+                } else {
+                    throw new \Exception("Malheuresement nous n'avons plus assez de place");
+                }
+                // réservation du soir non changé
+            } elseif ($this->isReservationForDiner($newReservationTimeFormated)) {
+                if ($disponibilityMaxSeatDiner - ($newReservationHowManyGuest - $reservationHowManyGuest) >= 0) {
+                    $this->updateSeatDinerAndHowManyGuest($disponibility, $disponibilityMaxSeatDiner, $newReservationHowManyGuest, $reservationHowManyGuest, $originalReservation);
+                } else {
+                    throw new \Exception("Malheuresement nous n'avons plus assez de place");
+                }
+            } else {
+                throw new \Exception('Veuillez respecter les crénaux horaires!');
+            }
+        }
     }
 
-    //créer une nouvelle disponibility pour le soir
-    public function newReservationDiner($disponibility, $howManyGuest)
+    // reset la disponility du diner afin de supprimer la réservation annulé ou changé de date
+    private function resetOldDisponibilityDiner(Disponibility $disponibility, int $reservationHowManyGuest): void
     {
         $disponibility
-            ->setMaxReservationDiner(12)
-            ->setMaxSeatDiner(40 - $howManyGuest)
-            ->setMaxReservationLunch(13)
-            ->setMaxSeatLunch(40);
-    }
-
-    // reset la disponility du diner afin de supprimer la réservation annulé ou changé de date 
-    public function resetOldDisponibilityDiner($disponibility, $reservationHowManyGuest)
-    {
-        $disponibility->setMaxReservationDiner($disponibility->getMaxReservationDiner() + 1)
+            ->setMaxReservationDiner($disponibility->getMaxReservationDiner() + 1)
             ->setMaxSeatDiner($disponibility->getMaxSeatDiner() + $reservationHowManyGuest);
     }
 
-    // reset la disponility du lunch afin de supprimer la réservation annulé ou changé de date 
-    public function resetOldDisponibilityLunch($disponibility, $reservationHowManyGuest)
+    // reset la disponility du lunch afin de supprimer la réservation annulé ou changé de date
+    private function resetOldDisponibilityLunch(Disponibility $disponibility, int $reservationHowManyGuest): void
     {
         $disponibility
             ->setMaxReservationLunch($disponibility->getMaxReservationLunch() + 1)
@@ -216,16 +220,16 @@ class ReservationService extends AbstractController
     }
 
     // déplacer la résa et dispo du midi vers le soir
-    public function setLunchToDiner(
-        $reservation,
-        $newReservationHowManyGuest,
-        $disponibility,
-        $disponibilityMaxReservationLunch,
-        $disponibilityMaxReservationDiner,
-        $disponibilityMaxSeatLunch,
-        $disponibilityMaxSeatDiner,
-        $reservationHowManyGuest
-    ) {
+    private function moveLunchToDiner(
+        Reservation $reservation,
+        int $newReservationHowManyGuest,
+        Disponibility $disponibility,
+        int $disponibilityMaxReservationLunch,
+        int $disponibilityMaxReservationDiner,
+        int $disponibilityMaxSeatLunch,
+        int $disponibilityMaxSeatDiner,
+        int $reservationHowManyGuest
+    ): void {
         $reservation->setHowManyGuest($newReservationHowManyGuest);
         $disponibility
             ->setMaxReservationLunch($disponibilityMaxReservationLunch + 1)
@@ -234,9 +238,23 @@ class ReservationService extends AbstractController
             ->setMaxSeatDiner($disponibilityMaxSeatDiner - $newReservationHowManyGuest);
     }
 
-    // déplacer la résa et dispo du soir vers le midi
-    public function setDinerToLunch($reservation, $disponibility, $newReservationHowManyGuest, $disponibilityMaxReservationDiner, $disponibilityMaxReservationLunch, $disponibilityMaxSeatDiner, $disponibilityMaxSeatLunch, $reservationHowManyGuest)
+    private function isMovingLunchToDiner(string $reservationTime, string $newReservationTime): bool
     {
+        return ($reservationTime >= SELF::START_OF_SERVICE_LUNCH && $reservationTime <= SELF::END_OF_SERVICE_LUNCH)
+            && ($newReservationTime >= SELF::START_OF_SERVICE_DINER && $newReservationTime <= SELF::END_OF_SERVICE_DINER);
+    }
+
+    // déplacer la résa et dispo du soir vers le midi
+    private function moveDinerToLunch(
+        Reservation $reservation,
+        Disponibility $disponibility,
+        int $newReservationHowManyGuest,
+        int $disponibilityMaxReservationDiner,
+        int $disponibilityMaxReservationLunch,
+        int $disponibilityMaxSeatDiner,
+        int $disponibilityMaxSeatLunch,
+        int $reservationHowManyGuest
+    ): void {
         $reservation->setHowManyGuest($newReservationHowManyGuest);
         $disponibility
             ->setMaxReservationDiner($disponibilityMaxReservationDiner + 1)
@@ -245,68 +263,137 @@ class ReservationService extends AbstractController
             ->setMaxSeatLunch($disponibilityMaxSeatLunch - $newReservationHowManyGuest);
     }
 
-    // on déduit les dispo du diner avec la nouvelle résa
-    public function setDiner($disponibility, $disponibilityMaxSeatDiner, $newReservationHowManyGuest, $reservationHowManyGuest, $reservation)
+    private function isMovingDinerToLunch(string $reservationTime, string $newReservationTime): bool
     {
+        return ($reservationTime >= SELF::START_OF_SERVICE_DINER && $reservationTime <= SELF::END_OF_SERVICE_DINER)
+            && ($newReservationTime >= SELF::START_OF_SERVICE_LUNCH && $newReservationTime <= SELF::END_OF_SERVICE_LUNCH);
+    }
+
+    // cette fonction permet de mettre à jour la disponibility et reservation lors d'un changement de nombre de personne
+    private function updateSeatDinerAndHowManyGuest(
+        Disponibility $disponibility,
+        int $disponibilityMaxSeatDiner,
+        int $newReservationHowManyGuest,
+        int $reservationHowManyGuest,
+        Reservation $reservation
+    ): void {
         $disponibility->setMaxSeatDiner($disponibilityMaxSeatDiner - ($newReservationHowManyGuest - $reservationHowManyGuest));
         $reservation->setHowManyGuest($newReservationHowManyGuest);
     }
-
-    // on déduit les dispo du lunch avec la nouvelle résa
-    public function setLunch($disponibility, $disponibilityMaxSeatLunch, $newReservationHowManyGuest, $reservationHowManyGuest, $reservation)
-    {
+    
+    // cette fonction permet de mettre à jour la disponibility et reservation lors d'un changement de nombre de personne
+    private function updateSeatLunchAndHowManyGuest(
+        Disponibility $disponibility,
+        int $disponibilityMaxSeatLunch,
+        int $newReservationHowManyGuest,
+        int $reservationHowManyGuest,
+        Reservation $reservation
+    ): void {
         $disponibility->setMaxSeatLunch($disponibilityMaxSeatLunch - ($newReservationHowManyGuest - $reservationHowManyGuest));
         $reservation->setHowManyGuest($newReservationHowManyGuest);
     }
 
-    // gestion de l'heure et date de résa antérieur ou trop lointaine
-    public function validateTimeAndDate($newReservationTimeFormated, $newDate, $today, $timeOfToday)
+    public function handleNewReservation(Disponibility $disponibility, Reservation $reservation): Disponibility
     {
-        if ($newDate->format("Y-m-d") < $today->format("Y-m-d")) {
+        $reservationTime = $reservation->getTime()->format('H:i');
+        $howManyGuest = $reservation->getHowManyGuest();
+
+        if ($this->isReservationForLunch($reservationTime)) {
+            $this->createNewReservationLunch($disponibility, $howManyGuest);
+        } elseif ($this->isReservationForDiner($reservationTime)) {
+            $this->createNewReservationDiner($disponibility, $howManyGuest);
+        } else {
+            throw new Exception('Veuillez entrer un horaire valide !');
+        }
+        return $disponibility;
+    }
+    // créer une nouvelle disponibility pour le midi
+    public function createNewReservationLunch(Disponibility $disponibility, int $howManyGuest): void
+    {
+        $disponibility
+            ->setMaxReservationLunch(12)
+            ->setMaxSeatLunch(40 - $howManyGuest)
+            ->setMaxReservationDiner(13)
+            ->setMaxSeatDiner(40);
+    }
+
+    // créer une nouvelle disponibility pour le soir
+    public function createNewReservationDiner(Disponibility $disponibility, int $howManyGuest): void
+    {
+        $disponibility
+            ->setMaxReservationDiner(12)
+            ->setMaxSeatDiner(40 - $howManyGuest)
+            ->setMaxReservationLunch(13)
+            ->setMaxSeatLunch(40);
+    }
+
+    // gestion de l'heure et date de résa antérieur ou trop lointaine
+    public function isDateAndTimeValid(
+        string $timeOfReservation,
+        DateTimeImmutable $dateOfReservation,
+        DateTimeImmutable $dateOfToday,
+        string $timeOfToday
+    ): bool {
+        if ($dateOfReservation->format('Y-m-d') < $dateOfToday->format('Y-m-d')) {
             throw new \Exception("Votre réservation ne peut être antérieure à aujourd'hui");
         }
-        if ($newReservationTimeFormated < $timeOfToday && $newDate->format("Y-m-d") == $today->format("Y-m-d")) {
-            throw new \Exception("Votre réservation ne peut être antérieure à maintenant");
+        if ($timeOfReservation < $timeOfToday && $dateOfReservation->format('Y-m-d') == $dateOfToday->format('Y-m-d')) {
+            throw new \Exception('Votre réservation ne peut être antérieure à maintenant');
         }
-        if ($newDate->format('Y-m-d') > $today->modify('+1 month +2 weeks')) {
-            throw new \Exception("Votre réservation ne peut dépasser 1 mois et 2 semaines à partir de maintenant");
+        if ($dateOfReservation->format('Y-m-d') > $dateOfToday->modify('+1 month +2 weeks')) {
+            throw new \Exception('Votre réservation ne peut dépasser 1 mois et 2 semaines à partir de maintenant');
         }
+        return true;
     }
 
     // si une réservation a déjà été faite a ce jour, on récupère la disponibility et on déduit les places avec la nouvelle réservation
-    public function checkDisponibilityAndUpdateEntity($disponibility, $reservation)
+    public function checkDisponibilityAndUpdateEntity(Disponibility $disponibility, Reservation $reservation): Disponibility
     {
         // Récupération de l'heure de la réservation
-        $reservationTime = $reservation->getTime()->format("H:i");
+        $reservationTime = $reservation->getTime()->format('H:i');
 
         // Vérification des plages horaires de réservation
-        if ($reservationTime >= "12:00" && $reservationTime <= "14:00") {
-            $disponibilityReservation = $disponibility->getMaxReservationLunch();
-            $disponibilityMaxSeat = $disponibility->getMaxSeatLunch();
-        } elseif ($reservationTime >= "19:00" && $reservationTime <= "21:00") {
-            $disponibilityReservation = $disponibility->getMaxReservationDiner();
-            $disponibilityMaxSeat = $disponibility->getMaxSeatDiner();
+        if ($this->isReservationForLunch($reservationTime)) {
+            $numberOfReservationAvailable = $disponibility->getMaxReservationLunch();
+            $numberOfSeatAvailable = $disponibility->getMaxSeatLunch();
+        } elseif ($this->isReservationForDiner($reservationTime)) {
+            $numberOfReservationAvailable = $disponibility->getMaxReservationDiner();
+            $numberOfSeatAvailable = $disponibility->getMaxSeatDiner();
         } else {
             // Gestion des horaires invalides
-            throw new Exception('Veuillez entrer des horaires valides !');
+            throw new \Exception('Veuillez entrer des horaires valides !');
         }
 
         // Vérification de la disponibilité des places
         $howManyGuest = $reservation->getHowManyGuest();
-        if ($disponibilityMaxSeat - $howManyGuest < 0 || $disponibilityReservation - 1 < 0) {
-            throw new Exception('Malheureusement, nous n\'avons pas assez de places.');
+        if (!$this->verifyDisponibilityAvailable($numberOfSeatAvailable, $numberOfReservationAvailable, $howManyGuest)) {
+            throw new \Exception('Malheureusement, nous n\'avons pas assez de places.');
         }
 
         // Mise à jour de la nouvelle disponibilité
-        if ($reservationTime <= "14:00") {
+        if ($this->isReservationForLunch($reservationTime)) {
             $disponibility
                 ->setMaxReservationLunch($disponibility->getMaxReservationLunch() - 1)
                 ->setMaxSeatLunch($disponibility->getMaxSeatLunch() - $howManyGuest);
-        } else {
+        } elseif ($this->isReservationForDiner($reservationTime)) {
             $disponibility
                 ->setMaxReservationDiner($disponibility->getMaxReservationDiner() - 1)
                 ->setMaxSeatDiner($disponibility->getMaxSeatDiner() - $howManyGuest);
         }
+
         return $disponibility;
+    }
+
+    private function isReservationForLunch(string $reservationTime): bool
+    {
+        return $reservationTime >= SELF::START_OF_SERVICE_LUNCH && $reservationTime <= SELF::END_OF_SERVICE_LUNCH;
+    }
+    private function isReservationForDiner(string $reservationTime): bool
+    {
+        return $reservationTime >= SELF::START_OF_SERVICE_DINER && $reservationTime <= SELF::END_OF_SERVICE_DINER;
+    }
+    private function verifyDisponibilityAvailable(int $numberOfSeatAvailable, int $numberOfReservationAvailable, int $howManyGuest)
+    {
+        return $numberOfReservationAvailable - 1 >= 0 && $numberOfSeatAvailable - $howManyGuest >= 0;
     }
 }

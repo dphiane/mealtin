@@ -17,8 +17,7 @@ class AuthenticationEntryPoint implements AuthenticationEntryPointInterface
 
     public function start(Request $request, AuthenticationException $authException = null): RedirectResponse
     {
-        // add a custom flash message and redirect to the login page
-        $request->getSession()->getFlashBag()->add('warning', 'Vous devez être connecter pour réserver une table');
+        $request->getSession()->getFlashBag()->add('success', 'Afin de fournir un meilleur service, veuillez vous connecter ou vous inscrire.');
         return new RedirectResponse($this->urlGenerator->generate('app_login'));
     }
 }

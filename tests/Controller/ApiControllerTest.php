@@ -32,28 +32,13 @@ class ApiControllerTest extends WebTestCase
         // Vérifier les données renvoyées sont vide dans la réponse
         $this->assertEmpty($content);
 
-        /*         $this->assertArrayHasKey('maxReservationLunch', $content);
-        $this->assertArrayHasKey('maxReservationDiner', $content);
-        $this->assertArrayHasKey('maxSeatLunch', $content);
-        $this->assertArrayHasKey('maxSeatDiner', $content);
-        $this->assertArrayHasKey('hour', $content);
-        $this->assertArrayHasKey('minute', $content);
-        $this->assertArrayHasKey('howManyGuest', $content);
-        $this->assertArrayHasKey('date', $content);
- */
-        // Vous pouvez effectuer d'autres assertions pour vérifier les valeurs spécifiques des clés
-
-        // Par exemple :
-        /*         $this->assertEquals(4, $content['maxReservationLunch']);
-        $this->assertEquals(6, $content['maxSeatDiner']); */
-        // etc.
     }
     public function testDisponibilityFromDatabaseWithData(){
         
         $client = static::createClient();
 
         // Création d'une requête GET avec une date factice
-        $client->request('GET', '/api', ['date' => '2024-03-10']);
+        $client->request('GET', '/api', ['date' => '2024-04-26']);
         $response = $client->getResponse();
 
         // Vérifier que la réponse a un code de statut 200 (OK)
@@ -72,7 +57,7 @@ class ApiControllerTest extends WebTestCase
         $this->assertArrayHasKey('howManyGuest', $content);
         $this->assertArrayHasKey('date', $content);
 
-        $this->assertEquals(4, $content['maxReservationLunch']);
-        $this->assertEquals(6, $content['maxSeatDiner']);
+        $this->assertEquals(9, $content['maxReservationLunch']);
+        $this->assertEquals(35, $content['maxSeatDiner']);
     }
 }

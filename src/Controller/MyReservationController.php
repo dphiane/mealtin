@@ -1,21 +1,17 @@
 <?php
 
 namespace App\Controller;
-
-
-use Exception;
-use DateTimeImmutable;
 use App\Form\ReservationType;
+use App\Repository\DisponibilityRepository;
+use App\Repository\ReservationRepository;
 use App\Service\EmailService;
 use App\Service\ReservationService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\ReservationRepository;
-use App\Repository\DisponibilityRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MyReservationController extends AbstractController
 {
@@ -28,7 +24,7 @@ class MyReservationController extends AbstractController
         $reservations = $reservationRepository->findBy(['user' => $user->getId()]);
 
         return $this->render('my_reservation/index.html.twig', [
-            'reservations' => $reservations
+            'reservations' => $reservations,
         ]);
     }
 
@@ -41,41 +37,45 @@ class MyReservationController extends AbstractController
         DisponibilityRepository $disponibilityRepository,
         EntityManagerInterface $entityManagerInterface,
         EmailService $emailService,
-        ReservationService $reservationService
+        ReservationService $reservationService,
     ) {
         $reservation = $reservationRepository->findOneBy(['id' => $id]);
-        $originalReservation= clone $reservation;
+
+        $this->denyAccessUnlessGranted('ACCESS_EDIT_RESERVATION', $reservation);
+
+        $originalReservation = clone $reservation;
         $disponibility = $disponibilityRepository->findOneBy(['id' => $reservation->getDisponibility()]);
         $reservationForm = $this->createForm(ReservationType::class, $reservation);
 
         $dateReservation = $reservation->getDate()->format('Y-m-d');
         $reservationTime = $reservation->getTime();
-        
+
         $reservationForm->handleRequest($request);
         if ($reservationForm->isSubmitted() && $reservationForm->isValid()) {
             try {
                 $reservations = $reservationRepository->findOneBy(['date' => $reservation->getDate()]);
 
-                $reservationService->handleEditReservation($disponibility, $originalReservation, $reservations,$reservation);
+                $reservationService->handleEditReservation($disponibility, $originalReservation, $reservations, $reservation);
                 $entityManagerInterface->persist($disponibility);
                 $entityManagerInterface->persist($reservation);
                 $entityManagerInterface->flush();
 
-                $this->addFlash("success", "Votre réservation a bien été modifiée");
-                //$emailService->sendConfirmModifyEmail($reservation->getUser()->getEmail(), $reservation->getDate(), $reservation->getTime(), $reservation->getHowManyGuest());
+                $this->addFlash('success', 'Votre réservation a bien été modifiée');
+                // $emailService->sendConfirmModifyEmail($reservation->getUser()->getEmail(), $reservation->getDate(), $reservation->getTime(), $reservation->getHowManyGuest());
 
                 return $this->redirectToRoute('app_my_reservation', ['modifiée' => 1]);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // Afficher les erreurs
-                $this->addFlash("warning", $e->getMessage());
-                return new Response("Bad Request", 400);
+                $this->addFlash('warning', $e->getMessage());
+
+                return new Response('Bad Request', 400);
             }
         }
 
         return $this->render('my_reservation/edit.html.twig', [
             'reservationForm' => $reservationForm->createView(),
             'dateReservation' => $dateReservation,
-            'reservationTime' =>$reservationTime
+            'reservationTime' => $reservationTime,
         ]);
     }
 
@@ -85,6 +85,8 @@ class MyReservationController extends AbstractController
     {
         // Récupérer l'entité de la réservation à supprimer
         $reservation = $reservationRepository->find($id);
+        $this->denyAccessUnlessGranted('ACCESS_EDIT_RESERVATION', $reservation);
+
         // Vérifier si la réservation existe
         if (!$reservation) {
             throw $this->createNotFoundException('La réservation n\'existe pas');
@@ -96,6 +98,7 @@ class MyReservationController extends AbstractController
 
         // Répondre avec une réponse de succès
         $this->addFlash('success', 'Votre réservation a bien été annulée');
-        return $this->redirectToRoute("app_my_reservation");
+
+        return $this->redirectToRoute('app_my_reservation');
     }
 }

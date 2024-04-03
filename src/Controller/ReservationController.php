@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -62,10 +63,11 @@ class ReservationController extends AbstractController
                 // $emailService->sendConfirmNewReservation($reservation->getUser()->getEmail(), $reservation->getDate(), $reservation->getTime(), $reservation->getHowManyGuest());
 
                 return $this->redirectToRoute('app_my_reservation', ['success' => 1]);
+                
             } catch (\Exception $e) {
                 // Gérez les erreurs de manière appropriée
                 $this->addFlash('warning', $e->getMessage());
-                return new Response('Bad Request', 400);
+                return new Response($e->getMessage(),400);
             }
         }
 

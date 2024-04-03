@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block body %}
-	{% if app.request.query.get('reservée') %}
+	{% if app.request.query.get('success') %}
 			<div class="flash-success">Votre réservation a bien été enregistrée</div>
 	{% endif %}
 		{% if app.request.query.get('modifiée') %}

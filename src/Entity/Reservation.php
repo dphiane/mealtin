@@ -21,15 +21,18 @@ class Reservation
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     #[Assert\NotNull]
+    #[Assert\NotBlank]
     private ?\DateTimeImmutable $date = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE)]
     #[Assert\NotNull]
+    #[Assert\NotBlank]
     private ?\DateTimeImmutable $time = null;
 
     #[ORM\Column]
     #[Assert\Positive]
     #[Assert\NotNull]
+    #[Assert\NotBlank]
     private ?int $howManyGuest = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]

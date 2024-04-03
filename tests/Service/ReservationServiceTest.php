@@ -303,6 +303,7 @@ class ReservationServiceTest extends TestCase
         $disponibility = new Disponibility();
         $reservation = new Reservation();
         $reservation->setTime(new DateTimeImmutable('19:00'));
+        $reservation->setDate(new DateTimeImmutable(self::DATE));
         $reservation->setHowManyGuest(15);
 
         $this->reservationService->handleNewReservation($disponibility, $reservation);

@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: mealtinpotes
+-- Host: 127.0.0.1    Database: mealtinpotes_test
 -- ------------------------------------------------------
 -- Server version	8.0.35
 
@@ -36,7 +36,7 @@ CREATE TABLE `doctrine_migration_versions` (
 
 LOCK TABLES `doctrine_migration_versions` WRITE;
 /*!40000 ALTER TABLE `doctrine_migration_versions` DISABLE KEYS */;
-INSERT INTO `doctrine_migration_versions` VALUES ('DoctrineMigrations\\Version20240209145016','2024-02-09 14:50:23',156),('DoctrineMigrations\\Version20240209150840','2024-02-09 15:09:06',36),('DoctrineMigrations\\Version20240213090952','2024-02-13 09:09:58',133),('DoctrineMigrations\\Version20240215083026','2024-02-15 08:30:39',178),('DoctrineMigrations\\Version20240215092907','2024-02-15 09:29:22',183),('DoctrineMigrations\\Version20240215093952','2024-02-15 09:40:09',62),('DoctrineMigrations\\Version20240215094241','2024-02-15 09:42:46',215),('DoctrineMigrations\\Version20240215103602','2024-02-15 10:36:07',212),('DoctrineMigrations\\Version20240215105034','2024-02-15 10:50:47',155),('DoctrineMigrations\\Version20240301083050','2024-03-01 09:10:45',190),('DoctrineMigrations\\Version20240319100225','2024-03-19 10:02:41',110);
+INSERT INTO `doctrine_migration_versions` VALUES ('DoctrineMigrations\\Version20240209145016','2024-03-07 12:21:57',165),('DoctrineMigrations\\Version20240209150840','2024-03-07 12:21:57',26),('DoctrineMigrations\\Version20240213090952','2024-03-07 12:35:56',51),('DoctrineMigrations\\Version20240215083026','2024-03-07 12:35:57',140),('DoctrineMigrations\\Version20240215092907','2024-03-07 12:35:57',117),('DoctrineMigrations\\Version20240215093952','2024-03-07 12:35:57',54),('DoctrineMigrations\\Version20240215094241','2024-03-07 12:35:57',163),('DoctrineMigrations\\Version20240215103602','2024-03-07 12:35:57',376),('DoctrineMigrations\\Version20240215105034','2024-03-07 12:35:57',85),('DoctrineMigrations\\Version20240301083050','2024-03-07 12:35:57',128);
 /*!40000 ALTER TABLE `doctrine_migration_versions` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-11 13:02:48
+-- Dump completed on 2024-04-11 13:02:49

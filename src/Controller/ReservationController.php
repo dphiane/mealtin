@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -20,7 +19,7 @@ class ReservationController extends AbstractController
 {
     #[Route('/reservation', name: 'app_reservation')]
     #[IsGranted('ROLE_USER')]
-    public function index(ReservationService $reservationService, Request $request, EntityManagerInterface $entityManagerInterface, ReservationRepository $reservationRepository, EmailService $emailService): Response
+    public function newReservation(ReservationService $reservationService, Request $request, EntityManagerInterface $entityManagerInterface, ReservationRepository $reservationRepository, EmailService $emailService): Response
     {
         $reservation = new Reservation();
         $form = $this->createForm(ReservationType::class, $reservation);
@@ -28,8 +27,16 @@ class ReservationController extends AbstractController
         $user = $this->getUser();
         $today = new \DateTimeImmutable('now');
         $timeOfToday = $today->format('H:i');
-        
+
+        if($form->isSubmitted()){
+            // Si l'utilisateur est mal intentionné et tente d'envoyer une heure qui ne respecte pas la liste d'horaires autorisés
+            if($form->getData()->getTime() === null){
+                $this->addFlash("warning", "Veuillez respecter les crénaux horaires!");
+                return new Response('Bad Request',400);
+            }
+        }
         if ($form->isSubmitted() && $form->isValid()) {
+            
             $date = $reservation->getDate();
             $reservations = $reservationRepository->findOneBy(['date' => $date]);
             try {
@@ -60,7 +67,7 @@ class ReservationController extends AbstractController
                 $entityManagerInterface->flush();
                 $this->addFlash('success', 'Votre réservation a bien été enregistrée');
 
-                // $emailService->sendConfirmNewReservation($reservation->getUser()->getEmail(), $reservation->getDate(), $reservation->getTime(), $reservation->getHowManyGuest());
+                $emailService->sendConfirmNewReservation($reservation->getUser()->getEmail(), $reservation->getDate()->format("d-m-Y"), $reservation->getTime()->format('H:i'), $reservation->getHowManyGuest());
 
                 return $this->redirectToRoute('app_my_reservation', ['success' => 1]);
                 

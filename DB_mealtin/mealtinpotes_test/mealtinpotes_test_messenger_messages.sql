@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: mealtinpotes
+-- Host: 127.0.0.1    Database: mealtinpotes_test
 -- ------------------------------------------------------
 -- Server version	8.0.35
 
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-11 13:02:47
+-- Dump completed on 2024-04-11 13:02:48

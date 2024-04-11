@@ -61,7 +61,7 @@ class MyReservationController extends AbstractController
                 $entityManagerInterface->flush();
 
                 $this->addFlash('success', 'Votre réservation a bien été modifiée');
-                // $emailService->sendConfirmModifyEmail($reservation->getUser()->getEmail(), $reservation->getDate(), $reservation->getTime(), $reservation->getHowManyGuest());
+                $emailService->sendConfirmModifyEmail($reservation->getUser()->getEmail(), $reservation->getDate()->format("d-m-Y"), $reservation->getTime()->format('H:i'), $reservation->getHowManyGuest());
 
                 return $this->redirectToRoute('app_my_reservation', ['modifiée' => 1]);
             } catch (\Exception $e) {

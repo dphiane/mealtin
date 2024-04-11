@@ -33,11 +33,12 @@ class ReservationService extends AbstractController
         $newReservationTimeFormated = $modifyReservation->getTime()->format('H:i');
         $newReservationHowManyGuest = $modifyReservation->getHowManyGuest();
         $newDate = $modifyReservation->getDate();
-        $today = new \DateTimeImmutable('now');
+        $today = new DateTimeImmutable('now');
         $timeOfToday = $today->format('H:i');
 
         $this->isDateAndTimeValid($newReservationTimeFormated, $newDate, $today, $timeOfToday);
-
+        $this->isDayClose($newDate);
+        
         if ($oldDate->format('Y-m-d') === $newDate->format('Y-m-d')) {
             $this->handleEditReservationSameDay(
                 $reservationTime,
@@ -90,7 +91,7 @@ class ReservationService extends AbstractController
                 $disponibilityReservation = $newDisponibility->getMaxReservationDiner();
                 $disponibilityMaxSeat = $newDisponibility->getMaxSeatDiner();
             } else {
-                throw new \Exception('Veuillez entrer un horaire valide !');
+                throw new Exception('Veuillez entrer un horaire valide !');
             }
             
             // on set les nouvelles disponibilitées
@@ -104,7 +105,7 @@ class ReservationService extends AbstractController
 
             // Vérification de la disponibilité des places
             if ($disponibilityMaxSeat - $newReservationHowManyGuest < 0 || $disponibilityReservation - 1 < 0) {
-                throw new \Exception('Malheureusement, nous n\'avons pas assez de places.');
+                throw new Exception('Malheureusement, nous n\'avons pas assez de places.');
             }
             // mise a jour de la disponibilité en fonction des horaires indiqué
             if ($this->isReservationForLunch($newReservationTimeFormated)) {
@@ -112,7 +113,7 @@ class ReservationService extends AbstractController
             } elseif ($this->isReservationForDiner($newReservationTimeFormated)) {
                 $this->updateDinerDisponibilityWhenDateChange($newDisponibility, $newReservationHowManyGuest);
             } else {
-                throw new \Exception('Une erreur est survenue lors de votre modification');
+                throw new Exception('Une erreur est survenue lors de votre modification');
             }
             $modifyReservation->setDisponibility($newDisponibility);
 
@@ -125,7 +126,7 @@ class ReservationService extends AbstractController
             } elseif ($this->isReservationForDiner($reservationTime)) {
                 $this->resetOldDisponibilityDiner($disponibility, $reservationHowManyGuest);
             } else {
-                throw new \Exception('Veuillez entrer un horaire valide !');
+                throw new Exception('Veuillez entrer un horaire valide !');
             }
 
             if ($this->isReservationForLunch($newReservationTimeFormated)) {
@@ -133,7 +134,7 @@ class ReservationService extends AbstractController
             } elseif ($this->isReservationForDiner($newReservationTimeFormated)) {
                 $this->createNewReservationDiner($newDisponibility, $newReservationHowManyGuest);
             } else {
-                throw new \Exception('Une erreur est survenue lors de votre modification');
+                throw new Exception('Une erreur est survenue lors de votre modification');
             }
 
             $this->entityManager->persist($newDisponibility);
@@ -173,14 +174,14 @@ class ReservationService extends AbstractController
             if ($disponibilityMaxSeatDiner - $newReservationHowManyGuest >= 0) {
                 $this->moveLunchToDiner($originalReservation, $newReservationHowManyGuest, $disponibility, $disponibilityMaxReservationLunch, $disponibilityMaxReservationDiner, $disponibilityMaxSeatLunch, $disponibilityMaxSeatDiner, $reservationHowManyGuest);
             } else {
-                throw new \Exception("Malheuresement nous n'avons plus assez de place pour le diner");
+                throw new Exception("Malheuresement nous n'avons plus assez de place pour le diner");
             }
             // réservation du soir vers le midi
         } elseif ($this->isMovingDinerToLunch($reservationTime, $newReservationTimeFormated)) {
             if ($disponibilityMaxSeatLunch - $newReservationHowManyGuest >= 0) {
                 $this->moveDinerToLunch($originalReservation, $disponibility, $newReservationHowManyGuest, $disponibilityMaxReservationDiner, $disponibilityMaxReservationLunch, $disponibilityMaxSeatDiner, $disponibilityMaxSeatLunch, $reservationHowManyGuest);
             } else {
-                throw new \Exception("Malheuresement nous n'avons plus assez de place pour le midi");
+                throw new Exception("Malheuresement nous n'avons plus assez de place pour le midi");
             }
         } else {
             // réservation du midi non changé
@@ -188,17 +189,17 @@ class ReservationService extends AbstractController
                 if ($disponibilityMaxSeatLunch - ($newReservationHowManyGuest - $reservationHowManyGuest) >= 0) {
                     $this->updateSeatLunchAndHowManyGuest($disponibility, $disponibilityMaxSeatLunch, $newReservationHowManyGuest, $reservationHowManyGuest, $originalReservation);
                 } else {
-                    throw new \Exception("Malheuresement nous n'avons plus assez de place");
+                    throw new Exception("Malheuresement nous n'avons plus assez de place");
                 }
                 // réservation du soir non changé
             } elseif ($this->isReservationForDiner($newReservationTimeFormated)) {
                 if ($disponibilityMaxSeatDiner - ($newReservationHowManyGuest - $reservationHowManyGuest) >= 0) {
                     $this->updateSeatDinerAndHowManyGuest($disponibility, $disponibilityMaxSeatDiner, $newReservationHowManyGuest, $reservationHowManyGuest, $originalReservation);
                 } else {
-                    throw new \Exception("Malheuresement nous n'avons plus assez de place");
+                    throw new Exception("Malheuresement nous n'avons plus assez de place");
                 }
             } else {
-                throw new \Exception('Veuillez respecter les crénaux horaires!');
+                throw new Exception('Veuillez respecter les crénaux horaires!');
             }
         }
     }
@@ -298,6 +299,8 @@ class ReservationService extends AbstractController
         $reservationTime = $reservation->getTime()->format('H:i');
         $howManyGuest = $reservation->getHowManyGuest();
 
+        $this->isDayClose($reservation->getDate());
+
         if ($this->isReservationForLunch($reservationTime)) {
             $this->createNewReservationLunch($disponibility, $howManyGuest);
         } elseif ($this->isReservationForDiner($reservationTime)) {
@@ -335,13 +338,20 @@ class ReservationService extends AbstractController
         string $timeOfToday
     ): bool {
         if ($dateOfReservation->format('Y-m-d') < $dateOfToday->format('Y-m-d')) {
-            throw new \Exception("Votre réservation ne peut être antérieure à aujourd'hui");
+            throw new Exception("Votre réservation ne peut être antérieure à aujourd'hui");
         }
         if ($timeOfReservation < $timeOfToday && $dateOfReservation->format('Y-m-d') == $dateOfToday->format('Y-m-d')) {
-            throw new \Exception('Votre réservation ne peut être antérieure à maintenant');
+            throw new Exception('Votre réservation ne peut être antérieure à maintenant');
         }
         if ($dateOfReservation->format('Y-m-d') > $dateOfToday->modify('+1 month +2 weeks')) {
-            throw new \Exception('Votre réservation ne peut dépasser 1 mois et 2 semaines à partir de maintenant');
+            throw new Exception('Votre réservation ne peut dépasser 1 mois et 2 semaines à partir de maintenant');
+        }
+        return true;
+    }
+    
+    private function isDayClose(DateTimeImmutable $dateOfReservation){
+        if ($dateOfReservation->format('N') == 7 || $dateOfReservation->format('N') == 1) {
+            throw new Exception('Les réservations ne sont pas acceptées les dimanches et lundis.');
         }
         return true;
     }
@@ -361,13 +371,13 @@ class ReservationService extends AbstractController
             $numberOfSeatAvailable = $disponibility->getMaxSeatDiner();
         } else {
             // Gestion des horaires invalides
-            throw new \Exception('Veuillez entrer des horaires valides !');
+            throw new Exception('Veuillez entrer des horaires valides !');
         }
 
         // Vérification de la disponibilité des places
         $howManyGuest = $reservation->getHowManyGuest();
         if (!$this->verifyDisponibilityAvailable($numberOfSeatAvailable, $numberOfReservationAvailable, $howManyGuest)) {
-            throw new \Exception('Malheureusement, nous n\'avons pas assez de places.');
+            throw new Exception('Malheureusement, nous n\'avons pas assez de places.');
         }
 
         // Mise à jour de la nouvelle disponibilité

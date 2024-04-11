@@ -2,7 +2,10 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\User;
+use DateTimeImmutable;
 use App\Repository\UserRepository;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ReservationControllerTest extends WebTestCase
@@ -52,31 +55,4 @@ class ReservationControllerTest extends WebTestCase
         $this->assertSelectorExists('form[name="reservation"]');
     }
 
-/*     public function testValidFormSubmit()
-    {
-        // Crée un client HTTP Symfony
-        $client = static::createClient();
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        // Récupérer l'utilisateur de test
-        $this->user = $userRepository->findOneByEmail('eugene14@maillet.fr');
-        // Simuler la connexion de l'utilisateur
-        $client->loginUser($this->user);
-        $crawler = $client->request('GET','/reservation');
-        $submitButton = $crawler->selectButton('Réserver');
-
-        $date = new DateTimeImmutable('2024-03-27 19:00:00');
-        $form= $submitButton->form();
-        $form["reservation[date]"] = 
-        $form["reservation[time][hour]"] = $date->format('H');
-        $form["reservation[time][minute]"] = $date->format('i');
-        $form["reservation[howManyGuest]"] = '5';
-
-        $token = $client->getContainer()->get('security.csrf.token_manager')->getToken('reservation')->getValue();
-        $session = $client->getContainer()->get('session');
-        $session->set('your_session_key', 'your_session_value');
-        $session->save();
-        $form['reservation[_token]'] = $token;
-        $client->submit($form);
-        $this->assertResponseStatusCodeSame(302);
-    } */
 }

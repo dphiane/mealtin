@@ -2,53 +2,53 @@
 
 namespace App\Tests;
 
-use App\Entity\Reservation;
-use App\Form\RegisterType;
-use Symfony\Component\Form\Test\TypeTestCase;
+use App\Repository\UserRepository;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-/* class ReservationFormTest extends TypeTestCase
-{
-    public function testSubmitValidData(): void
+class ReservationFormTest extends WebTestCase
+{    
+    public function testIndexFormSubmissionSuccess()
     {
-        $formData = [
-            'date' => '2024-03-27',
-            'time' => ['hour' => 12, 'minute' => 0],
-            'howManyGuest' => 5,
-        ];
+        $client = $this->createClient();
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneByEmail('eugene14@maillet.fr');
+        $client->loginUser($user);
+        $crawler = $client->request('GET', '/reservation');
 
-        $expectedData = [
-            'date' => new \DateTimeImmutable('2024-03-27'),
-            'time' => new \DateTimeImmutable('12:00:00'),
-            'howManyGuest' => 5,
-        ];
+        $form = $crawler->selectButton('Réserver')->form();
+        $form['reservation[date]'] = '2024-04-10'; // Remplacez cette valeur par une date valide
+        $form['reservation[time][hour]'] = '12'; // Remplacez cette valeur par une heure valide
+        $form['reservation[time][minute]'] = '15'; // Remplacez cette valeur par une heure valide
+        $form['reservation[howManyGuest]'] = 4; // Remplacez cette valeur par le nombre d'invités valide
 
-        $reservation = new Reservation();
-        // $reservation will retrieve data from the form submission; pass it as the second argument
-        $form = $this->factory->create(RegisterType::class, $reservation);
+        $client->submit($form);
 
-        $expected = new Reservation();
-        // ...populate $expected properties with the data stored in $formData
+        // Vérifiez si la redirection s'est bien effectuée vers la page 'app_my_reservation'
+        $this->assertTrue($client->getResponse()->isRedirect('/mes-reservations?success=1'));
 
-        // submit the data to the form directly
-        $form->submit($formData);
-
-        // This check ensures there are no transformation failures
-        $this->assertTrue($form->isSynchronized());
-
-        // check that $reservation was modified as expected when the form was submitted
-        $this->assertEquals($expectedData, $reservation);
+        // Suivez la redirection
+        $client->followRedirect();
+        $this->assertAnySelectorTextContains('.flash-success','Votre réservation a bien été enregistrée');
     }
 
-    public function testCustomFormView(): void
+    public function testIndexFormSubmissionInvalidData()
     {
-        $formData = new TestObject();
-        // ... prepare the data as you need
+        $client = $this->createClient();
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneByEmail('eugene14@maillet.fr');
+        $client->loginUser($user);
+        $crawler = $client->request('GET', '/reservation');
 
-        // The initial data may be used to compute custom view variables
-        $view = $this->factory->create(TestedType::class, $formData)
-            ->createView();
+        $form = $crawler->selectButton('Réserver')->form();
+        // Ne pas remplir le formulaire avec des données valides
+        $form['reservation[date]'] = '2024-04-01';
+        $form['reservation[time][hour]'] = '12'; // Remplacez cette valeur par une heure valide
+        $form['reservation[time][minute]'] = '15'; // Remplacez cette valeur par une heure valide
+        $form['reservation[howManyGuest]'] = '4';
 
-        $this->assertArrayHasKey('custom_var', $view->vars);
-        $this->assertSame('expected value', $view->vars['custom_var']);
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertRouteSame('app_reservation');
     }
-} */
+}

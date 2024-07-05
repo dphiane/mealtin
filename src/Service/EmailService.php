@@ -9,7 +9,7 @@ use Symfony\Component\Mime\Address;
 
 class EmailService
 {
-    private string $senderEmail = 'dphiane@yahoo.fr';
+    private string $senderEmail = 'contact@mealtin.fr';
     private string $senderName = 'Mealtin';
 
     public function __construct(

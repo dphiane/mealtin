@@ -52,7 +52,7 @@ class ContactController extends AbstractController
             $data = $form->getData();
             $email = (new contact())
             ->from($data['email'])
-            ->to('dphiane@yahoo.fr')
+            ->to('contact@mealtin.fr')
             ->subject('contacte mealtin')
             ->text($data['message']);
             $mailer->send($email);

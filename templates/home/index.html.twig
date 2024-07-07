@@ -26,7 +26,7 @@
 				<div
 					class="col-lg-4 d-flex align-items-center justify-content-center position-relative">
 					<!-- Button trigger modal -->
-					<button type="button" class="play-btn" data-bs-toggle="modal" data-bs-target="#exampleModal"></button>
+					<button type="button" aria-label="Start Video" class="play-btn" data-bs-toggle="modal" data-bs-target="#exampleModal"></button>
 				</div>
 
 				<!-- Modal -->
@@ -34,7 +34,7 @@
 					<div class="modal-dialog modal-dialog-centered">
 						<div class="modal-content">
 							<div class="plyr__video-embed" id="player">
-								<iframe src="https://www.youtube.com/embed/F3zw1Gvn4Mk?si=_BsKpII41jxkYwsm?autoplay=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
+								<iframe src="https://www.youtube.com/embed/F3zw1Gvn4Mk?si=_BsKpII41jxkYwsm?autoplay=1" allowfullscreen allowtransparency allow="autoplay" defer></iframe>
 							</div>
 
 						</div>
@@ -53,7 +53,7 @@
 						<div class="row">
 							<div class="col-lg-6 order-1 order-lg-2">
 								<div class="about-img">
-									<img src="{{asset('images/restaurant.jpg')}}" alt="">
+									<img src="{{asset('images/restaurant.webp')}}" alt="image d'un restaurant">
 								</div>
 							</div>
 							<div class="col-lg-6 pt-4 pt-lg-0 order-2 order-lg-1 content">

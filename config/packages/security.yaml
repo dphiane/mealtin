@@ -23,7 +23,7 @@ security:
                 class: App\Entity\User
                 property: email
         app_admin_provider:
-            entity: 
+            entity:
                 class: App\Entity\Admin
                 property: username
     firewalls:
@@ -41,6 +41,7 @@ security:
                 default_target_path: /admin
             remember_me:
                 secret: '%kernel.secret%'
+                lifetime: 604800
             custom_authenticator: App\Security\AdminAuthenticator
             entry_point: App\Security\AdminAuthenticator
 
@@ -56,6 +57,7 @@ security:
                 enable_csrf: true
             remember_me:
                 secret: '%kernel.secret%'
+                lifetime: 604800            
             logout:
                 path: app_logout
         # where to redirect after logout

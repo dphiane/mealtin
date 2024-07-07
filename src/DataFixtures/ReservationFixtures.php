@@ -24,7 +24,7 @@ class ReservationFixtures extends Fixture
         $faker = Factory::create();
 
         for ($i = 0; $i < 100; ++$i) {
-            $date = \DateTimeImmutable::createFromMutable($faker->dateTimeBetween('now', '+2 month'));
+            $date = \DateTimeImmutable::createFromMutable($faker->dateTimeBetween('now', '+4 month'));
             $reservations = $this->reservationRepository->findOneBy(['date' => $date]);
             $users = $this->userRepository->findAll();
 
